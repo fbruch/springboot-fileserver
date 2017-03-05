@@ -1,0 +1,3 @@
+application-text
+second line
+last line (3)
