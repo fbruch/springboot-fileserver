@@ -1,0 +1,36 @@
+= springboot-fileserver
+
+REST-style File Server being realized with Java and Spring Boot.
+
+# Goals
+
+1. Personal Reference Project for Spring Boot
+1. Backend to upcoming Personal Text Management System
+
+# Status (Pre-Alpha)
+
+* No installable build, no run-time configuration
+* Serving all files from a pre configured directory.
+* Simple explorer-like navigation into document roots ("boxes" and their sub-directories to support interactive testing
+
+## Test / Development
+* Maybe change document root config in FileService class.
+** Defaults to single root `src/main/resources/box`
+* Start using Application class.
+* Point your browser to `http://localhost:8080`
+
+# Future
+
+## Next Steps
+* Customizable content root directories
+* Serving correct mimetype-header using Apache Tika
+* Serving metadata in HTML header (last update, e.g.)
+* Automatic conversion from Markdown to HTML
+* Automatic conversion from Asciidoctor to HTML
+
+## Later
+* Update existing and create new files
+* Automatic Version Control using git
+* Full text search using Lucene
+* Support tags and filtering
+* ...
