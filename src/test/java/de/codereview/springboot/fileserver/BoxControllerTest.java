@@ -35,6 +35,9 @@ public class BoxControllerTest
 	@MockBean
 	private FileService fileService;
 
+	@MockBean
+	private MimeTypeService mimeTypeService;
+
 	@Mock
 	private Stream<Path> pathStream1;
 

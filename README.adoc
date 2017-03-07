@@ -22,6 +22,7 @@ REST-style File Server being realized with Java and Spring Boot.
 # Future
 
 ## Next Steps
+
 * Serving correct mimetype-header using Apache Tika
 * Serving metadata in HTML header (last update, e.g.)
 * Automatic conversion from Markdown to HTML
@@ -36,3 +37,9 @@ REST-style File Server being realized with Java and Spring Boot.
 * Full text search using Lucene
 * Support tags and filtering
 * ...
+
+# Credits
+* https://projects.spring.io/spring-boot/[Spring Boot]
+* https://tika.apache.org/[Apache Tika]
+* https://github.com/vsch/flexmark-java[flexmark-java] (Markdown parser )
+* https://github.com/asciidoctor/asciidoctorj[asciidoctorj]

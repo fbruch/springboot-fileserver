@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,20 +25,23 @@ public class FileController
 
 	final FileService fileService;
 	final HtmlService htmlService;
+	final MimeTypeService mimeTypeService;
 
 	private static final int PREFIX_PATH_LENGTH = "/file/".length();
 
 	@Autowired
-	public FileController(FileService fileService, HtmlService htmlService)
+	public FileController(FileService fileService, HtmlService htmlService, MimeTypeService mimeTypeService)
 	{
 		this.fileService = fileService;
 		this.htmlService = htmlService;
+		this.mimeTypeService = mimeTypeService;
 	}
 
 	@RequestMapping(value = "/{box}/**", method = RequestMethod.GET)
 	public Object file(@PathVariable String box,
 					   HttpServletRequest request,
-					   @RequestHeader Map<String, String> header)
+					   @RequestHeader Map<String, String> header,
+					   HttpServletResponse response)
 	{
 		System.out.println("header = " + header);
 		String path = (String) request.getAttribute(
@@ -53,6 +57,9 @@ public class FileController
 				return htmlService.listDireectory(filePath, box, boxPath, request.getContextPath());
 			} else
 			{
+				String mimetype = mimeTypeService.detectMimeType(filePath);
+				// TODO: why is "text/x-web-markdown" received as application/octet-stream (Insomnia)
+				response.setHeader("Content-Type", mimetype);
 				return fileService.readFile(filePath);
 			}
 		} catch (IOException e)

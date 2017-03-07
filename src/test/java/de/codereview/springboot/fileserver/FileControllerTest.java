@@ -44,6 +44,9 @@ public class FileControllerTest
 	@Mock
 	private Stream<Path> pathStream;
 
+	@MockBean
+	private MimeTypeService mimeTypeService;
+
 	@Captor
 	ArgumentCaptor<String> stringCaptor;
 
@@ -72,6 +75,7 @@ public class FileControllerTest
 		when(fileService.listDir(BOX_PATH)).thenReturn(pathStream);
 		byte[] content = {42, 43, 44};
 		when(fileService.readFile(any())).thenReturn(content);
+		when(mimeTypeService.detectMimeType(any())).thenReturn("text/plain");
 
 		MvcResult result = mockMvc.perform(get("/file/" + BOX_NAME + "/" + DIR_PATH + "/" + FILE_PATH))
 				.andDo(print()).andExpect(status().isOk()).andReturn();
