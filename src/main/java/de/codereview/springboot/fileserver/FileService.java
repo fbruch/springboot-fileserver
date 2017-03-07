@@ -1,5 +1,7 @@
 package de.codereview.springboot.fileserver;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -16,10 +18,12 @@ public class FileService
 {
 	private Map<String, Path> boxes;
 
-	public FileService()
+	@Autowired
+	public FileService(@Value("${box.root.name}") String box,
+					   @Value("${box.root.path}") String path)
 	{
 		boxes = new HashMap<>();
-		boxes.put("box", Paths.get("src/test/resources/box")); // FIXME: externalize configuration
+		boxes.put(box, Paths.get(path));
 	}
 
 	public Path getBoxPath(String box)
