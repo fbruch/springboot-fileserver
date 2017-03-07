@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -12,11 +13,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -25,9 +26,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/**
- * TODO: mock filesystem access, if done in BoxController
- */
 @RunWith(SpringRunner.class)
 //@SpringBootTest
 //@AutoConfigureMockMvc // full spring application context...
@@ -43,6 +41,9 @@ public class FileControllerTest
 	@MockBean
 	private FileService fileService;
 
+	@Mock
+	private Stream<Path> pathStream;
+
 	@Captor
 	ArgumentCaptor<String> stringCaptor;
 
@@ -52,9 +53,9 @@ public class FileControllerTest
 	private Map<String, Path> boxes = new HashMap<>();
 
 	private static final String BOX_NAME = "some-random-string";
-	private static final Path BOX_PATH = Paths.get("src/test/resources/box");
-	private static final String DIR_PATH = "data";
-	private static final String FILE_PATH = "application-json.json";
+	private static final Path BOX_PATH = Paths.get("some/random/path");
+	private static final String DIR_PATH = "some/sub/dir";
+	private static final String FILE_PATH = "dummy-file.txt";
 
 	@Before
 	public void setUp() {
@@ -65,10 +66,10 @@ public class FileControllerTest
 	@Test
 	public void shouldServeFileContentUsingFileService() throws Exception {
 		when(fileService.getBoxList()).thenReturn(boxes.keySet());
-		when(fileService.getBoxPath(anyString())).thenReturn(BOX_PATH);
+		when(fileService.getBoxPath(BOX_NAME)).thenReturn(BOX_PATH);
 		when(fileService.getFilePath(anyString(), anyString())).thenReturn(
 				BOX_PATH.resolve(DIR_PATH + "/" + FILE_PATH));
-		when(fileService.listDir(BOX_PATH)).thenReturn(Files.list(BOX_PATH));
+		when(fileService.listDir(BOX_PATH)).thenReturn(pathStream);
 		byte[] content = {42, 43, 44};
 		when(fileService.readFile(any())).thenReturn(content);
 
@@ -77,9 +78,5 @@ public class FileControllerTest
 
 		org.junit.Assert.assertThat(result.getResponse().getContentAsByteArray(),
 				org.hamcrest.Matchers.equalTo(content));
-
-		// TODO: make FileServiceTest starting with this...
-//		org.junit.Assert.assertThat((long)result.getResponse().getContentAsByteArray().length,
-//				org.hamcrest.Matchers.equalTo(Files.size(BOX_PATH.resolve(DIR_PATH + "/" + FILE_PATH))));
 	}
 }

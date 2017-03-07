@@ -21,8 +21,9 @@ public class HomeControllerTest
 	private int port;
 
 	@Autowired
-	private TestRestTemplate restTemplate;	@Test
+	private TestRestTemplate restTemplate;
 
+	@Test
 	public void contextLoads() {
 		assertThat(controller).isNotNull();
 	}
