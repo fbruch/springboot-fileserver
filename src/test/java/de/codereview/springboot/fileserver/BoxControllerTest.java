@@ -38,7 +38,10 @@ public class BoxControllerTest
 	@MockBean
 	private MimeTypeService mimeTypeService;
 
-	@Mock
+    @MockBean
+    private ConverterService converterService;
+
+    @Mock
 	private Stream<Path> pathStream1;
 
 	@Mock

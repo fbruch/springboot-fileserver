@@ -47,6 +47,9 @@ public class FileControllerTest
 	@MockBean
 	private MimeTypeService mimeTypeService;
 
+	@MockBean
+	private ConverterService converterService;
+
 	@Captor
 	ArgumentCaptor<String> stringCaptor;
 
