@@ -3,6 +3,7 @@ package de.codereview.springboot.fileserver;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -20,6 +21,9 @@ public class HomeControllerTest
 	@LocalServerPort
 	private int port;
 
+    @Value("${server.context-path}")
+	private String contextPath;
+
 	@Autowired
 	private TestRestTemplate restTemplate;
 
@@ -30,7 +34,7 @@ public class HomeControllerTest
 
 	@Test
 	public void greetingShouldReturnDefaultMessage() throws Exception {
-		assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/",
-				String.class)).contains("Hello, world!");
+		assertThat(this.restTemplate.getForObject("http://localhost:" + port
+                + "/" + contextPath, String.class)).contains("Hello, world!");
 	}
 }
