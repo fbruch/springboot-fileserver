@@ -13,6 +13,10 @@ public class MimeTypeService
 
 	public String detectMimeType(Path path) throws IOException
 	{
-		return tika.detect(path);
+		String mimetype = tika.detect(path);
+        if ("text/x-web-markdown".equals(mimetype)) { // see #1
+            mimetype = "text/markdown";
+        }
+        return mimetype;
 	}
 }
