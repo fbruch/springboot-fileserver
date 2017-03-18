@@ -1,4 +1,4 @@
-package de.codereview.springboot.fileserver;
+package de.codereview.springboot.fileserver.service;
 
 import org.apache.tika.Tika;
 import org.springframework.stereotype.Service;
@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 @Service
-public class MimeTypeService
+public class MimeTypeService // TODO: rename FileTypeService
 {
 	private Tika tika = new Tika();
 

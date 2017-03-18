@@ -1,4 +1,4 @@
-package de.codereview.springboot.fileserver;
+package de.codereview.springboot.fileserver.service.converter;
 
 import com.vladsch.flexmark.ast.Node;
 import com.vladsch.flexmark.html.HtmlRenderer;

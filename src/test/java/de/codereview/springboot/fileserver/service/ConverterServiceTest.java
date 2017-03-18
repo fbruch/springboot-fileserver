@@ -1,5 +1,6 @@
-package de.codereview.springboot.fileserver;
+package de.codereview.springboot.fileserver.service;
 
+import de.codereview.springboot.fileserver.service.converter.ConverterService;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

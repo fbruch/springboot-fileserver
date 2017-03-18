@@ -1,10 +1,12 @@
-package de.codereview.springboot.fileserver;
+package de.codereview.springboot.fileserver.browser;
 
+import de.codereview.springboot.fileserver.service.FileService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -21,9 +23,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-//@SpringBootTest
-//@AutoConfigureMockMvc // full spring application context...
-@WebMvcTest             // just the web layer...
+@SpringBootTest
+@AutoConfigureMockMvc // full spring application context...
+//@WebMvcTest             // just the web layer...
 public class BoxControllerTest
 {
 	@Autowired
@@ -34,12 +36,6 @@ public class BoxControllerTest
 
 	@MockBean
 	private FileService fileService;
-
-	@MockBean
-	private MimeTypeService mimeTypeService;
-
-    @MockBean
-    private ConverterService converterService;
 
     @Mock
 	private Stream<Path> pathStream1;
@@ -68,7 +64,7 @@ public class BoxControllerTest
 		// TODO: let boxPath1 and 2 return specific path names
 		// TODO: let pathStream1 and 2 return specific root files/dirs
 
-		MvcResult result = mockMvc.perform(get("/file")).andDo(print()).andExpect(status().isOk()).andReturn();
+		MvcResult result = mockMvc.perform(get("/fb")).andDo(print()).andExpect(status().isOk()).andReturn();
 
 		String contentAsString = result.getResponse().getContentAsString();
 

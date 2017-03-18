@@ -1,5 +1,6 @@
-package de.codereview.springboot.fileserver;
+package de.codereview.springboot.fileserver.service;
 
+import de.codereview.springboot.fileserver.service.converter.ConverterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,24 +22,21 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/file")
+@RequestMapping("/fs")
 public class FileController
 {
     private static final Logger log = LoggerFactory.getLogger(FileController.class);
 
-    final FileService fileService;
-    final HtmlService htmlService;
-    final MimeTypeService mimeTypeService;
-    final ConverterService converterService;
+    private final FileService fileService;
+    private final MimeTypeService mimeTypeService;
+    private final ConverterService converterService;
 
-    private static final int PREFIX_PATH_LENGTH = "/file/".length();
+    private static final int PREFIX_PATH_LENGTH = "/fs/".length();
 
     @Autowired
-    public FileController(FileService fileService, HtmlService htmlService,
-                          MimeTypeService mimeTypeService, ConverterService converterService)
+    public FileController(FileService fileService, MimeTypeService mimeTypeService, ConverterService converterService)
     {
         this.fileService = fileService;
-        this.htmlService = htmlService;
         this.mimeTypeService = mimeTypeService;
         this.converterService = converterService;
     }
@@ -55,14 +53,10 @@ public class FileController
 
         path = path.substring(PREFIX_PATH_LENGTH + box.length() + 1);
         Path filePath = fileService.getFilePath(box, path);
-        try
-        {
-            if (Files.isDirectory(filePath))
-            {
-                Path boxPath = fileService.getBoxPath(box);
-                return htmlService.listDireectory(filePath, box, boxPath, request.getContextPath());
-            } else
-            {
+        try {
+            if (Files.isDirectory(filePath)) {
+                throw new RuntimeException("accessing directories not implemented in service api");
+            } else {
                 String mimetype = mimeTypeService.detectMimeType(filePath);
 
                 String acceptHeader = header.get(HttpHeaders.ACCEPT);
@@ -70,29 +64,28 @@ public class FileController
                 byte[] bytes = fileService.readFile(filePath);
                 String filename = filePath.getFileName().toString();
                 List<MediaType> acceptedTypes = MediaType.parseMediaTypes(acceptHeader);
-                for (MediaType mediaType : acceptedTypes)
-                {
+                for (MediaType mediaType : acceptedTypes) {
                     String target = mediaType.toString();
-                    if (converterService.isConversionAvailable(mimetype, target))
-                    {
+                    if (converterService.isConversionAvailable(mimetype, target)) {
                         log.debug("conversion from {} to {}", mimetype, target);
                         // TODO better title than filename?
                         bytes = converterService.convert(bytes, mimetype, target, filename);
                         mimetype = target;
                         filename = filename + converterService.getTargetExtension(target);
+                        // TODO: redirect to url with extended extension?
+//                        response.sendRedirect("some-url"); // maybe forward, not rediret
                         break;
                     }
                 }
                 response.setHeader(HttpHeaders.CONTENT_TYPE, mimetype);
-                response.setHeader(HttpHeaders.CONTENT_LENGTH, ""+bytes.length);
+                response.setHeader(HttpHeaders.CONTENT_LENGTH, "" + bytes.length);
                 response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "filename=" + filename);
 
                 Map<String, String> metadata = fileService.getFileMetadata(filePath);
                 metadata.forEach(response::setHeader);
                 return bytes;
             }
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             String msg = "Error accesing box storage";
             log.error(msg);
             throw new IllegalArgumentException(msg, e);

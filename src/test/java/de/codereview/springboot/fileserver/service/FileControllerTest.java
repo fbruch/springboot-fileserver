@@ -1,5 +1,6 @@
-package de.codereview.springboot.fileserver;
+package de.codereview.springboot.fileserver.service;
 
+import de.codereview.springboot.fileserver.service.converter.ConverterService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,7 +8,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -27,16 +29,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-//@SpringBootTest
-//@AutoConfigureMockMvc // full spring application context...
-@WebMvcTest             // just the web layer...
+@SpringBootTest
+@AutoConfigureMockMvc                   // full spring application context...
+//@WebMvcTest(FileController.class)     // just the web layer...
 public class FileControllerTest
 {
 	@Autowired
 	private MockMvc mockMvc;
-
-	@MockBean
-	private HtmlService htmlService;
 
 	@MockBean
 	private FileService fileService;
@@ -80,7 +79,7 @@ public class FileControllerTest
 		when(fileService.readFile(any())).thenReturn(content);
 		when(mimeTypeService.detectMimeType(any())).thenReturn("text/plain");
 
-		MvcResult result = mockMvc.perform(get("/file/" + BOX_NAME + "/" + DIR_PATH + "/" + FILE_PATH))
+		MvcResult result = mockMvc.perform(get("/fs/" + BOX_NAME + "/" + DIR_PATH + "/" + FILE_PATH))
 				.andDo(print()).andExpect(status().isOk()).andReturn();
 
 		org.junit.Assert.assertThat(result.getResponse().getContentAsByteArray(),

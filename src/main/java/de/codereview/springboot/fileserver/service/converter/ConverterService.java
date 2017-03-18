@@ -1,4 +1,4 @@
-package de.codereview.springboot.fileserver;
+package de.codereview.springboot.fileserver.service.converter;
 
 import org.apache.tika.config.TikaConfig;
 import org.apache.tika.mime.MediaType;
@@ -14,14 +14,18 @@ import java.util.Map;
 @Service
 public class ConverterService
 {
-    private static final Logger log = LoggerFactory.getLogger(FileController.class);
+    private static final Logger log = LoggerFactory.getLogger(ConverterService.class);
 
     private Map<String, Converter> converters = new HashMap<>();
 
     public ConverterService() {
-        Converter markdown = new MarkdownHtmlConverter();
-        converters.put(markdown.getSource() + ";" + markdown.getTarget(), markdown);
+        registerConverter(new MarkdownHtmlConverter());
         // TODO: externalize configuration
+    }
+
+    private void registerConverter(Converter converter)
+    {
+        converters.put(converter.getSource() + ";" + converter.getTarget(), converter);
     }
 
     public boolean isConversionAvailable(String source, String target) {

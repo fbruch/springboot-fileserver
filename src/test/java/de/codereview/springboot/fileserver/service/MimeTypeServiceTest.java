@@ -1,4 +1,4 @@
-package de.codereview.springboot.fileserver;
+package de.codereview.springboot.fileserver.service;
 
 import org.junit.Test;
 
