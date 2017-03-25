@@ -6,6 +6,7 @@ import org.apache.tika.mime.MimeType;
 import org.apache.tika.mime.MimeTypeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -18,8 +19,10 @@ public class ConverterService
 
     private Map<String, Converter> converters = new HashMap<>();
 
-    public ConverterService() {
+    @Autowired
+    public ConverterService(AsciidocHtml asciidoc) {
         registerConverter(new MarkdownHtml());
+        registerConverter(asciidoc);
         // TODO: externalize configuration
     }
 

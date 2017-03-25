@@ -35,8 +35,8 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<optional>true</optional>
 		</dependency>
@@ -57,6 +57,11 @@
       <groupId>com.vladsch.flexmark</groupId>
       <artifactId>flexmark</artifactId>
       <version>0.17.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.asciidoctor</groupId>
+      <artifactId>asciidoctorj</artifactId>
+      <version>1.5.4</version>
     </dependency>
   </dependencies>
 

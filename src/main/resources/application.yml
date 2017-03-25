@@ -9,6 +9,8 @@ logging.level:
   de.codereview.springboot.fileserver.service: trace
 
 springboot-fileserver:
+  converter:
+    asciidoc.images.dir: images
   box:
     root:
       name: demo
