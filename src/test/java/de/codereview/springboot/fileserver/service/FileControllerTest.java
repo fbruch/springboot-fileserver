@@ -44,7 +44,7 @@ public class FileControllerTest
 	private Stream<Path> pathStream;
 
 	@MockBean
-	private MimeTypeService mimeTypeService;
+	private FileTypeService fileTypeService;
 
 	@MockBean
 	private ConverterService converterService;
@@ -77,7 +77,7 @@ public class FileControllerTest
 		when(fileService.listDir(BOX_PATH)).thenReturn(pathStream);
 		byte[] content = {42, 43, 44};
 		when(fileService.readFile(any())).thenReturn(content);
-		when(mimeTypeService.detectMimeType(any())).thenReturn("text/plain");
+		when(fileTypeService.detectMimeType(any())).thenReturn("text/plain");
 
 		MvcResult result = mockMvc.perform(get("/fs/" + BOX_NAME + "/" + DIR_PATH + "/" + FILE_PATH))
 				.andDo(print()).andExpect(status().isOk()).andReturn();

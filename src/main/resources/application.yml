@@ -1,0 +1,20 @@
+spring:
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
+
+logging.level:
+  org.springframework.web: info
+  de.codereview.springboot.fileserver: debug
+  de.codereview.springboot.fileserver.service: trace
+
+springboot-fileserver:
+  box:
+    root:
+      name: demo
+      path: src/test/resources/demo
+
+server:
+  port: 8001
+  context-path: /
+

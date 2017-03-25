@@ -19,7 +19,7 @@ public class ConverterService
     private Map<String, Converter> converters = new HashMap<>();
 
     public ConverterService() {
-        registerConverter(new MarkdownHtmlConverter());
+        registerConverter(new MarkdownHtml());
         // TODO: externalize configuration
     }
 
@@ -37,16 +37,21 @@ public class ConverterService
         return converters.get(key.intern());
     }
 
-    public byte[] convert(byte[] data, String source, String target, String title) {
+    public Result convert(byte[] data, String source, String target, String filename) {
         Converter converter = getConverter(source, target);
         if (converter==null) {
             String message = String.format("no converter from %s to %s registered.", source, target);
             log.error(message);
             throw new RuntimeException(message);
         }
-        return converter.convert(data, title);
+        return converter.convert(data, filename);
     }
 
+    /**
+     * give file extension for given mimetype
+     * @param target mimetype
+     * @return file extension according to Apache Tika
+     */
     public String getTargetExtension(String target) {
         String extension;
         try

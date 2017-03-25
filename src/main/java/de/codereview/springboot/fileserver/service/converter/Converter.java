@@ -6,5 +6,5 @@ public interface Converter
 
     String getTarget();
 
-    byte[] convert(byte[] source, String title);
+    Result convert(byte[] source, String filename);
 }

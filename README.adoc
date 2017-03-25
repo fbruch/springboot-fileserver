@@ -5,41 +5,40 @@ REST-style File Server being realized with Java and Spring Boot.
 # Goals
 
 1. Personal Reference Project for Spring Boot
-1. Backend to upcoming Personal Text Management System
+1. Backend for upcoming Personal Text Management System
 
 # Status (Pre-Alpha)
 
 * No installable build, no run-time configuration
-* Serving all files from a pre configured directory.
+* Serving all files from a configurable directory.
 * Simple explorer-like navigation into document roots ("boxes" and their sub-directories to support interactive testing
+* Mime-type detection using Apache Tika
+* Http-Header for file-based metadata
+* Automatic rendering from Markdown and Asciidoctor to HTML
 
 ## Test / Development
-* Maybe change document root in `application.properties`
-** Defaults to single root `src/test/resources/box`
-* Start using Application class (or `buildnrun.sh`
+* Maybe change document root in `application.yml`
+** Defaults to single root `src/test/resources/demo`
+* Start using Application.class (or `buildnrun.sh`)
 * Point your browser to `http://localhost:8080`
 
 # Future
 
-## Next Steps
+## Milestone 1 (Read Only, Plain Text, Markup Rendering)
+* Serving text files with mimetype and file-based metadata
+* Automatic rendering of markdown and asciidoctor to html
+* Experimental: Full text search
 
-* Serving correct mimetype-header using Apache Tika
-* Serving metadata in HTML header (last update, e.g.)
-* Automatic conversion from Markdown to HTML
-* Automatic conversion from Asciidoctor to HTML
-* License selection
-* Multiple content root directories
-* Unit-Test for Error Handler
+## Milestone 2 (Binary files)
+* Documents, Music, Images, Videos
+* Content-based metadata (id3, exif, ...)
+* Streaming large files
 
-## Later
-* Update existing and create new files
-* Automatic Version Control using git
-* Full text search using Lucene
-* Support tags and filtering
-* ...
+## Milestone 3 (Create/Update/Delete, Version History)
+* Create new files, update or delete existing files
+* Experimental: Automatic Version Control using git
 
 # Credits
-* https://projects.spring.io/spring-boot/[Spring Boot]
-* https://tika.apache.org/[Apache Tika]
-* https://github.com/vsch/flexmark-java[flexmark-java] (Markdown parser )
-* https://github.com/asciidoctor/asciidoctorj[asciidoctorj]
+* http://www.oracle.com/technetwork/java/javase/overview/index.html[Java 8], https://projects.spring.io/spring-boot/[Spring Boot]
+* https://tika.apache.org/[Apache Tika] (Parsing, Type detection)
+* https://github.com/vsch/flexmark-java[flexmark-java] (Markdown)

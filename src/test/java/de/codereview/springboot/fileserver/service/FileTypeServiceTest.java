@@ -6,15 +6,15 @@ import java.nio.file.Paths;
 
 import static org.junit.Assert.*;
 
-public class MimeTypeServiceTest
+public class FileTypeServiceTest
 {
-    private MimeTypeService service = new MimeTypeService();
+    private FileTypeService service = new FileTypeService();
 
     @Test
     public void detectMimeType() throws Exception
     {
         String type = service.detectMimeType(Paths.get(
-            "src/test/resources/box/markup/text-markdown.md"));
+            "src/test/resources/demo/markup/text-markdown.md"));
 
         assertEquals(type, "text/markdown");
     }

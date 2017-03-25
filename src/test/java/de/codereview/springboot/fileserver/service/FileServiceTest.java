@@ -9,9 +9,9 @@ import java.nio.file.Paths;
 
 public class FileServiceTest
 {
-	static final Path FILE_PATH = Paths.get("src/test/resources/box/media/image-jpeg.jpg");
+	static final Path FILE_PATH = Paths.get("src/test/resources/demo/media/image-jpeg.jpg");
 
-	private FileService service = new FileService("box", "src/test/resources");
+	private FileService service = new FileService("demo", "src/test/resources");
 
 	@Test
 	public void testReadFile() throws IOException

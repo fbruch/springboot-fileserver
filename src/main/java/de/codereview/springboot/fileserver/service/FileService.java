@@ -27,8 +27,8 @@ public class FileService
     private Map<String, Path> boxes;
 
     @Autowired
-    public FileService(@Value("${box.root.name}") String box,
-                       @Value("${box.root.path}") String path)
+    public FileService(@Value("${springboot-fileserver.box.root.name}") String box,
+                       @Value("${springboot-fileserver.box.root.path}") String path)
     {
         boxes = new HashMap<>();
         boxes.put(box, Paths.get(path));
