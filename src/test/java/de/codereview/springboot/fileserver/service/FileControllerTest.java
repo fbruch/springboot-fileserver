@@ -1,6 +1,6 @@
 package de.codereview.springboot.fileserver.service;
 
-import de.codereview.springboot.fileserver.service.converter.ConverterService;
+import de.codereview.springboot.fileserver.service.plugin.ConverterService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

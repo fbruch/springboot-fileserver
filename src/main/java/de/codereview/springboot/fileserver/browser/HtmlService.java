@@ -11,10 +11,14 @@ import java.nio.file.Path;
 @Service
 class HtmlService
 {
-    @Autowired
-    FileService fileService;
+    private FileService fileService;
 
-    public String listDireectory(Path dir, String box, Path boxPath, String contextPath)
+    public HtmlService(@Autowired FileService fileService)
+    {
+        this.fileService = fileService;
+    }
+
+    String listDireectory(Path dir, String box, Path boxPath, String contextPath)
     {
         StringBuilder builder = new StringBuilder();
         builder.append("<html><head><title>");

@@ -22,13 +22,13 @@ import java.util.stream.Stream;
 @Service
 public class FileService
 {
-    private static final Logger log = LoggerFactory.getLogger(FileController.class);
+    private static final Logger log = LoggerFactory.getLogger(FileService.class);
 
     private Map<String, Path> boxes;
 
     @Autowired
-    public FileService(@Value("${springboot-fileserver.box.root.name}") String box,
-                       @Value("${springboot-fileserver.box.root.path}") String path)
+    public FileService(@Value("${fileserver.box.root.name}") String box,
+                       @Value("${fileserver.box.root.path}") String path)
     {
         boxes = new HashMap<>();
         boxes.put(box, Paths.get(path));

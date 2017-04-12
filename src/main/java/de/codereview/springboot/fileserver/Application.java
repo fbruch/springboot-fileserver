@@ -1,6 +1,6 @@
 package de.codereview.springboot.fileserver;
 
-import de.codereview.springboot.fileserver.service.FileController;
+import de.codereview.springboot.fileserver.service.web.FileController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;

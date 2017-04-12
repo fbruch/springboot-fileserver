@@ -1,7 +1,9 @@
-package de.codereview.springboot.fileserver.service;
+package de.codereview.springboot.fileserver.service.web;
 
-import de.codereview.springboot.fileserver.service.converter.ConverterService;
-import de.codereview.springboot.fileserver.service.converter.Result;
+import de.codereview.springboot.fileserver.service.FileService;
+import de.codereview.springboot.fileserver.service.FileTypeService;
+import de.codereview.springboot.fileserver.service.plugin.ConverterService;
+import de.codereview.springboot.fileserver.service.plugin.ConverterResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +67,7 @@ public class FileController
                 byte[] bytes = fileService.readFile(filePath);
                 String filename = filePath.getFileName().toString();
                 List<MediaType> acceptedTypes = MediaType.parseMediaTypes(acceptHeader);
-                Result result = new Result(bytes, filename);
+                ConverterResult result = new ConverterResult(bytes, filename);
                 for (MediaType mediaType : acceptedTypes) {
                     String target = mediaType.toString();
                     if (converterService.isConversionAvailable(mimetype, target)) {

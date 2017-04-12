@@ -1,5 +1,7 @@
-package de.codereview.springboot.fileserver.service.converter;
+package de.codereview.springboot.fileserver.service.plugin;
 
+import de.codereview.springboot.fileserver.service.plugin.converter.AsciidocHtml;
+import de.codereview.springboot.fileserver.service.plugin.converter.MarkdownHtml;
 import org.apache.tika.config.TikaConfig;
 import org.apache.tika.mime.MediaType;
 import org.apache.tika.mime.MimeType;
@@ -40,7 +42,7 @@ public class ConverterService
         return converters.get(key.intern());
     }
 
-    public Result convert(byte[] data, String source, String target, String filename) {
+    public ConverterResult convert(byte[] data, String source, String target, String filename) {
         Converter converter = getConverter(source, target);
         if (converter==null) {
             String message = String.format("no converter from %s to %s registered.", source, target);

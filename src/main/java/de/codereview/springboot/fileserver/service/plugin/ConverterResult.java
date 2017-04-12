@@ -1,11 +1,11 @@
-package de.codereview.springboot.fileserver.service.converter;
+package de.codereview.springboot.fileserver.service.plugin;
 
-public class Result
+public class ConverterResult
 {
     private String title;
     private byte[] content;
 
-    public Result(byte[] content, String title)
+    public ConverterResult(byte[] content, String title)
     {
         this.title = title;
         this.content = content;
