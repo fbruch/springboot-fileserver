@@ -1,3 +1,3 @@
-#!/bin/sh
+#!/usr/bin/env bash
 mvn -DskipTests clean package
-java -jar target/springboot-fileserver-*-SNAPSHOT.jar
+java -jar target/springboot-fileserver-*.jar

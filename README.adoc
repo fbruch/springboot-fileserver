@@ -10,23 +10,24 @@ REST-style File Server being realized with Java and Spring Boot.
 # Status (Pre-Alpha)
 
 * No installable build, no run-time configuration
-* Serving all files from a configurable directory.
+* Serving all files from configurable directories.
 * Simple explorer-like navigation into document roots ("boxes" and their sub-directories to support interactive testing
 * Mime-type detection using Apache Tika
 * Http-Header for file-based metadata
 * Automatic rendering from Markdown and Asciidoctor to HTML
 
 ## Test / Development
-* Maybe change document root in `application.yml`
-** Defaults to single root `src/test/resources/demo`
-* Start using Application.class (or `buildnrun.sh`)
-* Point your browser to `http://localhost:8080`
+* Configure document roots in `application.yml`
+** Defaults to roots `demo` and `doc` below `src/test/resources`
+* Start using `Application.class`, `mvn spring-boot:run` or `buildnrun.sh`)
+* Point your browser to `http://localhost:8001`
 
 # Future
 
 ## Milestone 1 (Read Only, Plain Text, Markup Rendering)
 * Serving text files with mimetype and file-based metadata
 * Automatic rendering of markdown and asciidoctor to html
+* Maybe specific support for some other textual content, `csv` e. g.
 * Experimental: Full text search
 
 ## Milestone 2 (Binary files)

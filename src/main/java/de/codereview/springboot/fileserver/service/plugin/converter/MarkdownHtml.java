@@ -30,8 +30,10 @@ public class MarkdownHtml implements Converter
         Parser parser = Parser.builder().build();
         Node document = parser.parse(text);
         Heading heading = (Heading) document.getFirstChildAny(Heading.class);
-        String title = heading.getText().toString();
-        if (title==null) title = filename;
+        String title = filename; // fallback
+        if (heading != null && heading.getText()!=null) {
+            title = heading.getText().toString();
+        }
         HtmlRenderer renderer = HtmlRenderer.builder().build();
         StringBuilder builder = new StringBuilder(); // TODO: some template engine?
         builder.append("<html>");

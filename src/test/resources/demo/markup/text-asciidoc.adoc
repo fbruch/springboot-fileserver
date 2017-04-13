@@ -1,12 +1,12 @@
-= Document Title
+== Document Title
 
-# Header 1
+### Header 1
 
 Sample paragraph.
 
 * Item 1
 * Item 2
 
-## Sub-Header
+#### Sub-Header
 
 End of document.
