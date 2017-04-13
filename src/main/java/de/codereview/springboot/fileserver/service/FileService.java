@@ -3,7 +3,6 @@ package de.codereview.springboot.fileserver.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
@@ -24,24 +23,22 @@ public class FileService
 {
     private static final Logger log = LoggerFactory.getLogger(FileService.class);
 
-    private Map<String, Path> boxes;
+    private final Map<String, Path> roots = new HashMap<>();
 
     @Autowired
-    public FileService(@Value("${fileserver.box.root.name}") String box,
-                       @Value("${fileserver.box.root.path}") String path)
-    {
-        boxes = new HashMap<>();
-        boxes.put(box, Paths.get(path));
+    public FileService(FileServiceConfig config) {
+        config.getRoots().forEach(root ->
+            roots.put(root.getName(), Paths.get(root.getPath())));
     }
 
     public Path getBoxPath(String box)
     {
-        return boxes.get(box);
+        return roots.get(box);
     }
 
     public Set<String> getBoxList()
     {
-        return boxes.keySet();
+        return roots.keySet();
     }
 
     public Path getFilePath(String box, String path)

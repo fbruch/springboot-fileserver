@@ -13,9 +13,11 @@ fileserver:
     asciidoctor:
       images-dir: images
   box:
-    root:
-      name: demo
-      path: src/test/resources/demo
+    roots:
+      - name: demo
+        path: src/test/resources/demo
+      - name: doc
+        path: src/test/resources/doc
 
 server:
   port: 8001
