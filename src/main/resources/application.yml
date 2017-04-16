@@ -1,25 +1,52 @@
-spring:
-  jackson:
-    serialization:
-      INDENT_OUTPUT: true
-
-logging.level:
-  org.springframework.web: info
-  de.codereview.springboot.fileserver: debug
-  de.codereview.springboot.fileserver.service: trace
-
 fileserver:
-  plugin:
-    asciidoctor:
-      images-dir: images
   box:
     roots:
       - name: demo
         path: src/test/resources/demo
-      - name: doc
-        path: src/test/resources/doc
+  plugin:
+    asciidoctor:
+      images-dir: images
 
 server:
   port: 8001
   context-path: /
 
+spring:
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
+
+# Actuator
+
+# http://javabeat.net/spring-boot-actuator/
+# http://admin:secretd@localhost:8001
+management.context-path: /act
+management.security.enabled: false
+security.basic.enabled: false
+#security.user.name: admin
+#security.user.password: secret
+#management.security.role: SUPERUSER
+
+info.app:
+  name: springboot-fileserver
+  url: http://github.com/fbruch/springboot-fileserver
+
+endpoints:
+  actuator:
+    path: /actuator
+    enabled: true
+  beans:
+    id: springbeans
+    sensitive: false
+    enabled: true
+
+# Logging
+
+logging:
+  level:
+    org.springframework.web: info
+    de.codereview.springboot.fileserver: debug
+    de.codereview.springboot.fileserver.service: trace
+  pattern:
+    console: "%clr(%d{HH:mm:ss}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+#logging.pattern.console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"

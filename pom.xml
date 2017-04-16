@@ -30,6 +30,12 @@
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
 
+    <!-- Web -->
+
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -40,21 +46,28 @@
 			<artifactId>spring-boot-devtools</artifactId>
 			<optional>true</optional>
 		</dependency>
+
+    <!-- actuator -->
+
     <dependency>
         <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-<!-- generates target/classes/META-INF/spring-configuration-metadata.json during build
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-configuration-processor</artifactId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
       <optional>true</optional>
     </dependency>
--->
+<!--
     <dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
+      <groupId>org.springframework.hateoas</groupId>
+      <artifactId>spring-hateoas</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
+-->
+
+    <!-- file format support -->
+
 		<dependency>
 			<groupId>org.apache.tika</groupId>
 			<artifactId>tika-core</artifactId>
