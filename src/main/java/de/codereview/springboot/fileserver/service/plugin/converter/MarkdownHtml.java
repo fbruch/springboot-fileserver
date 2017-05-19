@@ -9,6 +9,8 @@ import de.codereview.springboot.fileserver.service.plugin.ConverterResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
+
 public class MarkdownHtml implements Converter
 {
     private static final Logger log = LoggerFactory.getLogger(MarkdownHtml.class);
@@ -24,9 +26,9 @@ public class MarkdownHtml implements Converter
     }
 
     @Override
-    public ConverterResult convert(byte[] source, String filename)
+    public ConverterResult convert(byte[] source, String sourceEncoding, String sourceLanguage, String filename) throws UnsupportedEncodingException
     {
-        String text = new String(source); // TODO: charset?
+        String text = new String(source, sourceEncoding);
         Parser parser = Parser.builder().build();
         Node document = parser.parse(text);
         Heading heading = (Heading) document.getFirstChildAny(Heading.class);
@@ -35,13 +37,20 @@ public class MarkdownHtml implements Converter
             title = heading.getText().toString();
         }
         HtmlRenderer renderer = HtmlRenderer.builder().build();
-        StringBuilder builder = new StringBuilder(); // TODO: some template engine?
-        builder.append("<html>");
-        builder.append(String.format("<head><title>%s</title></head>", title));
-        builder.append("<body>");
-        byte[] body = renderer.render(document).getBytes(); // TODO: charset?
+        StringBuilder builder = new StringBuilder();
+        builder.append("<!DOCTYPE html>");
+        if (sourceLanguage!=null) {
+            builder.append(String.format("<html lang=\"%s\"><head>", sourceLanguage));
+        } else {
+            builder.append("<html><head>");
+        }
+        builder.append("<meta charset=\"UTF-8\">");
+        builder.append("<meta name=\"generator\" content=\"flexmark-java\">");
+        builder.append(String.format("<title>%s</title>", title));
+        builder.append("</head><body>");
+        byte[] body = renderer.render(document).getBytes("UTF-8");
         builder.append(new String(body));
         builder.append("</body></html>");
-        return new ConverterResult(builder.toString().getBytes(), title);
+        return new ConverterResult(builder.toString().getBytes(), title, "UTF-8");
     }
 }

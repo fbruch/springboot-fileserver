@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,17 +19,37 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
+/**
+ * FileService uses static list of directory roots with given names ("boxes")
+ * and metadata and provides access to the files list, content and meta data.
+ */
 @Service
 public class FileService
 {
     private static final Logger log = LoggerFactory.getLogger(FileService.class);
 
     private final Map<String, Path> roots = new HashMap<>();
+    private final Map<String, FileServiceConfig.Root> boxes = new HashMap<>();
+
+    private FileTypeService fileTypeService;
 
     @Autowired
-    public FileService(FileServiceConfig config) {
+    public FileService(FileServiceConfig config, FileTypeService fileTypeService)
+    {
+        config.getRoots().forEach(root -> boxes.put(root.getName(), process(root)));
+        this.fileTypeService = fileTypeService;
         config.getRoots().forEach(root ->
             roots.put(root.getName(), Paths.get(root.getPath())));
+    }
+
+    private FileServiceConfig.Root process(FileServiceConfig.Root root)
+    {
+        FileServiceConfig.Root clone = (FileServiceConfig.Root) root.clone();
+        if (root.getEncoding()!=null) {
+            // normalize encoding name
+            root.setEncoding(Charset.forName(root.getEncoding()).name());
+        }
+        return clone;
     }
 
     public Path getBoxPath(String box)
@@ -38,30 +59,52 @@ public class FileService
 
     public Set<String> getBoxList()
     {
-        return roots.keySet();
+        return boxes.keySet();
     }
 
-    public Path getFilePath(String box, String path)
-    {
-        Path boxPath = getBoxPath(box.intern());
-        Path filePath = boxPath.resolve(path);
-        return filePath;
-    }
-
-    public Stream<Path> listDir(Path dirPath) throws IOException
+    public Stream<Path> getFileList(Path dirPath) throws IOException
     {
         Stream<Path> stream = Files.list(dirPath);
         return stream;
     }
 
-    public byte[] readFile(Path filePath) throws IOException
+    public FileResult getFile(String box, String path) throws IOException
     {
-        // TODO: limit file size to read in completely, config threshold, otherwise stream...
-        byte[] bytes = Files.readAllBytes(filePath);
-        return bytes;
+        Path boxPath = getBoxPath(box.intern());
+        if (boxPath==null) {
+            throw new RuntimeException("no such box");
+        }
+        Path filePath = boxPath.resolve(path);
+        boolean isDirectory = Files.isDirectory(filePath);
+        FileResult result = new FileResult(box, path, filePath.getFileName().toString(), isDirectory);
+        result.setParentPath(boxPath.relativize(filePath.getParent()).toString());
+        if (!isDirectory) {
+            // TODO: limit file size to read in completely, config threshold
+            // TODO: otherwise stream...
+            byte[] bytes = readFile(filePath);
+            result.setContent(bytes);
+            result.setMetadata(getFileMetadata(filePath));
+            String mimeType = fileTypeService.detectMimeType(filePath);
+            result.setMimeType(mimeType);
+            boolean textual = fileTypeService.isTextual(mimeType);
+            result.setTextual(textual);
+            result.setLanguage(getBoxLanguage(box));
+            if (textual) {
+                result.setEncoding(getBoxEncoding(box));
+            }
+        } else {
+            result.setDirectory(true);
+            // TODO: result.setMetadata(getDirMetadata(filePath));
+        }
+        return result;
     }
 
-    public Map<String, String> getFileMetadata(Path filePath)
+    byte[] readFile(Path filePath) throws IOException
+    {
+        return Files.readAllBytes(filePath);
+    }
+
+    Map<String, String> getFileMetadata(Path filePath)
     {
         Map<String, String> result = new HashMap<>();
         try {
@@ -77,4 +120,31 @@ public class FileService
         return result;
     }
 
+    /**
+     * @param box not null
+     * @return default charset, if no encoding is configured for the given box
+     */
+    String getBoxEncoding(String box)
+    {
+        String encoding = boxes.get(box).getEncoding();
+        if (encoding==null) {
+            encoding = Charset.defaultCharset().name();
+//        encoding = System.getProperty("file.encoding");
+        }
+        return encoding;
+    }
+
+    /**
+     * @param box not null
+     * @return null, if no language is configured for the given box
+     */
+    String getBoxLanguage(String box)
+    {
+        String lang = boxes.get(box).getLanguage();
+//        if (lang==null) {
+//            lang = Locale.getDefault().getLanguage();
+//            // alt: System.getProperty("user.language");
+//        }
+        return lang;
+    }
 }

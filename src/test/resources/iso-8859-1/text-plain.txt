@@ -4,6 +4,6 @@
  
  !"#$%&'()*+`-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_@abcdefghijklmnopqrstuvwxyz{|}~
 
-Ã¶Ã¤Ã¼
-Ã–Ã„Ãœ
-ÃŸ
+öäü
+ÖÄÜ
+ß

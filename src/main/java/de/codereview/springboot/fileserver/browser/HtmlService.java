@@ -1,7 +1,6 @@
 package de.codereview.springboot.fileserver.browser;
 
 import de.codereview.springboot.fileserver.service.FileService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -13,12 +12,12 @@ class HtmlService
 {
     private FileService fileService;
 
-    public HtmlService(@Autowired FileService fileService)
+    public HtmlService(FileService fileService)
     {
         this.fileService = fileService;
     }
 
-    String listDireectory(Path dir, String box, Path boxPath, String contextPath)
+    String listDirectory(Path dir, String box, Path boxPath, String contextPath)
     {
         StringBuilder builder = new StringBuilder();
         builder.append("<html><head><title>");
@@ -39,7 +38,7 @@ class HtmlService
         StringBuilder builder, String box,
         Path dirPath, Path boxPath, String contextPath) throws IOException
     {
-        fileService.listDir(dirPath).forEach(path ->
+        fileService.getFileList(dirPath).forEach(path ->
         {
             builder.append("<li><a href=\"");
             //				builder.append("http://localhost:8080/");

@@ -1,5 +1,6 @@
 package de.codereview.springboot.fileserver.browser;
 
+import de.codereview.springboot.fileserver.service.FileResult;
 import de.codereview.springboot.fileserver.service.FileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,6 @@ import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 @RestController
@@ -69,12 +69,21 @@ public class BoxController
         // alternative: request.getServletPath();
 
         path = path.substring(PREFIX_PATH_LENGTH + box.length() + 1);
-        Path filePath = fileService.getFilePath(box, path);
-        if (!Files.isDirectory(filePath)) {
+        FileResult fileResult = null;
+        try {
+            fileResult = fileService.getFile(box, path);
+        } catch (IOException e) {
+            String msg = "Error accessing file";
+            log.error(msg, e);
+            throw new RuntimeException(msg, e);
+        }
+        if (!fileResult.isDirectory()) {
             throw new RuntimeException("accessing files not implemented in browser api");
         } else {
             Path boxPath = fileService.getBoxPath(box);
-            return htmlService.listDireectory(filePath, box, boxPath, request.getContextPath());
+            Path parentPath = boxPath.resolve(fileResult.getParentPath());
+            Path filePath = parentPath.resolve(fileResult.getFilename());
+            return htmlService.listDirectory(filePath, box, boxPath, request.getContextPath());
         }
     }
 

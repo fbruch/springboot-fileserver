@@ -3,6 +3,16 @@ fileserver:
     roots:
       - name: demo
         path: src/test/resources/demo
+        encoding: UTF-8
+        language: en
+      - name: doc
+        path: src/test/resources/doc
+        encoding: utf-8
+        language: en
+      - name: iso-8859-1
+        path: src/test/resources/iso-8859-1
+        encoding: iso-8859-1
+        language: de
   plugin:
     asciidoctor:
       images-dir: images
@@ -10,6 +20,10 @@ fileserver:
 server:
   port: 8001
   context-path: /
+  compression:
+    enabled: true
+#    min-response-size: 2048
+#    mime-types: text/html,text/xml,text/plain,text/css
 
 spring:
   jackson:

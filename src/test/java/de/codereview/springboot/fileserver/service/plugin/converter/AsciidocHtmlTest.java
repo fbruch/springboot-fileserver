@@ -5,8 +5,8 @@ import de.codereview.springboot.fileserver.service.plugin.PluginProperties;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 public class AsciidocHtmlTest
 {
@@ -20,11 +20,27 @@ public class AsciidocHtmlTest
     }
 
     @Test
-    public void convert() throws Exception
+    public void utf8() throws Exception
     {
-        ConverterResult result = service.convert("# TEST".getBytes(), "DUMMY");
-        assertTrue(new String(result.getContent()).contains("<title>TEST</title>"));
-        assertEquals("TEST", result.getTitle());
+        String LANGUAGE = "de";
+        ConverterResult result = service.convert("# öäüßÖÄÜ".getBytes(), "UTF-8", LANGUAGE, "DUMMY");
+        String content = new String(result.getContent(), result.getEncoding());
+        assertThat(content).contains("<title>öäüßÖÄÜ</title>");
+        assertThat(content).containsIgnoringCase("<html lang=\"" + LANGUAGE + "\">");
+        assertThat(result.getTitle()).isEqualTo("öäüßÖÄÜ");
+    }
+
+    @Test
+    public void iso_8859_1() throws Exception
+    {
+        final String ENCODING = "iso-8859-1";
+        byte[] source = "# öäüßÖÄÜ".getBytes(ENCODING);
+        String LANGUAGE = "de";
+        ConverterResult result = service.convert(source, ENCODING, LANGUAGE, "DUMMY");
+        String content = new String(result.getContent(), result.getEncoding());
+        assertThat(content).contains("<title>öäüßÖÄÜ</title>");
+        assertThat(content).containsIgnoringCase("<html lang=\"" + LANGUAGE + "\">");
+        assertThat(result.getTitle()).isEqualTo("öäüßÖÄÜ");
     }
 
 }

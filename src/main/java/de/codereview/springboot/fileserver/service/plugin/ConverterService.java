@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,14 +43,18 @@ public class ConverterService
         return converters.get(key.intern());
     }
 
-    public ConverterResult convert(byte[] data, String source, String target, String filename) {
+    public ConverterResult convert(byte[] data, String source, String target, String filename, String sourceEncoding, String sourceLanguage) {
         Converter converter = getConverter(source, target);
         if (converter==null) {
             String message = String.format("no converter from %s to %s registered.", source, target);
             log.error(message);
             throw new RuntimeException(message);
         }
-        return converter.convert(data, filename);
+        try {
+            return converter.convert(data, sourceEncoding, sourceLanguage, filename);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Unsupported encoding", e);
+        }
     }
 
     /**

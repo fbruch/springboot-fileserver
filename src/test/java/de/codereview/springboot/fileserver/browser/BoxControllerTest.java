@@ -59,8 +59,8 @@ public class BoxControllerTest
 		when(fileService.getBoxPath("box1")).thenReturn(boxPath1);
 		when(fileService.getBoxPath("box2")).thenReturn(boxPath2);
 
-		when(fileService.listDir(boxPath1)).thenReturn(pathStream1);
-		when(fileService.listDir(boxPath2)).thenReturn(pathStream2);
+		when(fileService.getFileList(boxPath1)).thenReturn(pathStream1);
+		when(fileService.getFileList(boxPath2)).thenReturn(pathStream2);
 		// TODO: let boxPath1 and 2 return specific path names
 		// TODO: let pathStream1 and 2 return specific root files/dirs
 

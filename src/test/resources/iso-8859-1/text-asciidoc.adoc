@@ -10,8 +10,8 @@ Sample paragraph.
 #### Sub-Header
 
 ##### German umlauts
-* Ã¶, Ã¤, Ã¼
-* Ã–, Ã„, Ãœ
-* ÃŸ
+* ö, ä, ü
+* Ö, Ä, Ü
+* ß
 
 End of document.

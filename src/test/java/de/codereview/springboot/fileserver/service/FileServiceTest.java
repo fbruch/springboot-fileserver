@@ -2,31 +2,93 @@ package de.codereview.springboot.fileserver.service;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class FileServiceTest
 {
-	static final Path FILE_PATH = Paths.get("src/test/resources/demo/media/image-jpeg.jpg");
 
-	private FileService service;
+    static final String BOX = "demo";
+
+    private FileService service;
+
+    private FileTypeService fileTypeService;
 
 	@Before
     public void setUp() {
+        fileTypeService = Mockito.mock(FileTypeService.class);
 	    FileServiceConfig config = new FileServiceConfig();
-	    config.getRoots().add(new FileServiceConfig.Root("demo", "src/test/resources"));
-	    service = new FileService(config);
+	    config.getRoots().add(new FileServiceConfig.Root(BOX, "src/test/resources/demo"));
+	    service = new FileService(config, fileTypeService);
     }
 
-	@Test
-	public void testReadFile() throws IOException
-	{
-		byte[] result = service.readFile(FILE_PATH);
-		org.junit.Assert.assertThat((long)result.length,
-				org.hamcrest.Matchers.equalTo(Files.size(FILE_PATH)));
- 	}
+ 	@Test
+    public void directory() throws IOException
+    {
+        Mockito.when(fileTypeService.detectMimeType(Mockito.any())).thenThrow(new RuntimeException());
+        Mockito.when(fileTypeService.isTextual(Mockito.any())).thenThrow(new RuntimeException());
+        FileResult result = service.getFile(BOX, "src");
+        assertThat(result.getFilename()).isEqualTo("src");
+        assertThat(result.getBox()).isEqualTo(BOX);
+        assertThat(result.getEncoding()).isNull();
+        assertThat(result.getParentPath()).isEqualTo("");
+        assertThat(result.getLanguage()).isNull();
+        assertThat(result.isTextual()).isFalse();
+        assertThat(result.isDirectory()).isTrue();
+        assertThat(result.getMimeType()).isNull();
+        assertThat(result.getContent()).isNull();
+    }
+
+    @Test
+    public void textualFile() throws IOException
+    {
+        String MIME_TYPE = "text/csv";
+        Mockito.when(fileTypeService.detectMimeType(Mockito.any())).thenReturn(MIME_TYPE);
+        Mockito.when(fileTypeService.isTextual(Mockito.any())).thenReturn(true);
+        FileResult result = service.getFile(BOX, "data/subdir/text-csv.csv");
+        assertThat(result.getFilename()).isEqualTo("text-csv.csv");
+        assertThat(result.getBox()).isEqualTo(BOX);
+        assertThat(result.getEncoding()).isEqualTo(Charset.defaultCharset().name());
+        assertThat(result.getParentPath()).isEqualTo("data/subdir");
+        assertThat(result.getLanguage()).isNull();
+        assertThat(result.isTextual()).isTrue();
+        assertThat(result.isDirectory()).isFalse();
+        assertThat(result.getMimeType()).isEqualTo(MIME_TYPE);
+        assertThat(result.getContent()).isNotEmpty();
+    }
+
+    @Test
+    public void binaryFile() throws IOException
+    {
+        String MIME_TYPE = "image/jpeg";
+        Mockito.when(fileTypeService.detectMimeType(Mockito.any())).thenReturn(MIME_TYPE);
+        Mockito.when(fileTypeService.isTextual(Mockito.any())).thenReturn(false);
+        FileResult result = service.getFile(BOX, "media/image-jpeg.jpg");
+        assertThat(result.getFilename()).isEqualTo("image-jpeg.jpg");
+        assertThat(result.getBox()).isEqualTo(BOX);
+        assertThat(result.getEncoding()).isNull();
+        assertThat(result.getParentPath()).isEqualTo("media");
+        assertThat(result.getLanguage()).isNull();
+        assertThat(result.isTextual()).isFalse();
+        assertThat(result.isDirectory()).isFalse();
+        assertThat(result.getMimeType()).isEqualTo("image/jpeg");
+        assertThat(result.getContent()).hasSize(17148);
+    }
+
+    @Test
+    public void readFile() throws IOException
+    {
+        final Path FILE_PATH = Paths.get("src/test/resources/demo/media/image-jpeg.jpg");
+        byte[] result = service.readFile(FILE_PATH);
+        org.junit.Assert.assertThat((long)result.length,
+            org.hamcrest.Matchers.equalTo(Files.size(FILE_PATH)));
+    }
+
 }

@@ -18,6 +18,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,30 +31,12 @@ public class AsciidocHtml implements Converter
 
     private Map<String, String> properties;
 
-    private Map<String, Object> options;
-
 //    public AsciidocHtml(@Value("${fileserver.plugin.asciidoctor.images-dir}") String imageDir)
     @Autowired
     public AsciidocHtml(PluginProperties pluginProps)
     {
         asciidoctor = Asciidoctor.Factory.create();
-
         properties = new HashMap<>(pluginProps.getAsciidoctor());
-
-        String imageDir = properties.get("images-dir");
-
-        if (imageDir==null) imageDir=".";
-
-        Map<String, Object> attributes = AttributesBuilder.attributes()
-            .backend("html") // "docbook"
-            .imagesDir(imageDir)
-            .asMap();
-
-        options = OptionsBuilder.options()
-            .safe(SafeMode.SAFE)
-            .headerFooter(true)
-            .attributes(attributes)
-            .asMap();
     }
 
     @Override
@@ -69,19 +52,49 @@ public class AsciidocHtml implements Converter
     }
 
     @Override
-    public ConverterResult convert(byte[] source, String filename)
+    public ConverterResult convert(byte[] source, String sourceEncoding, String sourceLanguage, String filename) throws UnsupportedEncodingException
     {
-        String text = new String(source); // TODO: charset?
-        String title = giveTitle(source);
+        String text = new String(source, sourceEncoding);
+        if (!"UTF-8".equals(sourceEncoding.toUpperCase())) {
+            log.warn("Asciidoctor does not support encodings other than UTF-8, converting '{}'...", sourceEncoding);
+            // https://github.com/asciidoctor/asciidoctor.org/issues/160
+        }
+        String title = giveTitle(source, sourceEncoding);
         if (title==null) title = filename;
-        byte[] body = asciidoctor.convert(text, options).getBytes(); // TODO: charset?
-        return new ConverterResult(body, title);
+        Map<String, Object> options = getOptions(sourceLanguage);
+        byte[] body = asciidoctor.convert(text, options).getBytes("UTF-8");
+        return new ConverterResult(body, title, "UTF-8");
     }
 
-    private String giveTitle(byte[] source)
+    private Map<String, Object> getOptions(String sourceLanguage)
+    {
+        String imageDir = properties.get("images-dir");
+
+        if (imageDir==null) imageDir=".";
+        Map<String, Object> attributes = AttributesBuilder.attributes()
+            .backend("html") // "docbook"
+            .imagesDir(imageDir)
+            .asMap();
+
+        if (sourceLanguage!=null) {
+            attributes.put("lang", sourceLanguage);
+        }
+
+        Map<String, Object> options = OptionsBuilder.options()
+            .safe(SafeMode.SAFE)
+            .headerFooter(true)
+            .attributes(attributes)
+            .asMap();
+
+        return options;
+    }
+
+    private String giveTitle(byte[] source, String encoding)
     {
         String title = null;
-        try (Reader targetReader = new InputStreamReader(new ByteArrayInputStream(source))) {
+        try (Reader targetReader = new InputStreamReader(
+            new ByteArrayInputStream(source), encoding))
+        {
             StructuredDocument doc = asciidoctor.readDocumentStructure(targetReader, new HashMap<>());
             targetReader.close();
             Title docTitle = doc.getHeader().getDocumentTitle();
