@@ -10,7 +10,7 @@ REST-style File Server being realized with Java and Spring Boot.
 # Status (Pre-Alpha)
 
 * No installable build, no license selected
-* Single user, no security --> localhost only
+* Single user, no security -> localhost only
 * Serving all files from configurable directories
 * Simple explorer-like navigation into document roots ("boxes" and their sub-directories to support interactive testing
 * Mime-type detection using Apache Tika

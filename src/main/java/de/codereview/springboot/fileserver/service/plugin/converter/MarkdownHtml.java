@@ -8,9 +8,11 @@ import de.codereview.springboot.fileserver.service.plugin.Converter;
 import de.codereview.springboot.fileserver.service.plugin.ConverterResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
 
+@Service
 public class MarkdownHtml implements Converter
 {
     private static final Logger log = LoggerFactory.getLogger(MarkdownHtml.class);

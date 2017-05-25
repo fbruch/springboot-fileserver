@@ -1,7 +1,6 @@
 package de.codereview.springboot.fileserver.service.plugin;
 
 import de.codereview.springboot.fileserver.service.plugin.converter.AsciidocHtml;
-import de.codereview.springboot.fileserver.service.plugin.converter.MarkdownHtml;
 import org.apache.tika.config.TikaConfig;
 import org.apache.tika.mime.MediaType;
 import org.apache.tika.mime.MimeType;
@@ -12,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,18 +20,40 @@ public class ConverterService
 {
     private static final Logger log = LoggerFactory.getLogger(ConverterService.class);
 
-    private Map<String, Converter> converters = new HashMap<>();
+//    @Autowired
+//    Collection<Converter> converters;
+
+    private Map<String, Converter> sourceTargetMap = new HashMap<>();
 
     @Autowired
-    public ConverterService(AsciidocHtml asciidoc) {
-        registerConverter(new MarkdownHtml());
+    public ConverterService(AsciidocHtml asciidoc, Collection<Converter> converters) {
         registerConverter(asciidoc);
-        // TODO: externalize configuration
+        for (Converter converter : converters) {
+            if (!(converter instanceof AsciidocHtml)) {
+                registerConverter(converter);
+            }
+        }
+/*
+        String className = null;
+        try {
+            className = "de.codereview.fileserver.plugin.javahtml.JavaHtml";
+            // not like this: http://stackoverflow.com/a/36228195/650411
+//            Class clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
+            Class clazz = Class.forName(className);
+            Converter converter = (Converter) clazz.newInstance();
+            // TODO: prevent duplicate registering...
+            registerConverter(converter);
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+            log.error("Error instantiating '{}' as Converter", className, e);
+        }
+*/
     }
 
     private void registerConverter(Converter converter)
     {
-        converters.put(converter.getSource() + ";" + converter.getTarget(), converter);
+        log.info("Registering converter {} from {} to {}", converter.getClass().getName(),
+            converter.getSource(), converter.getTarget());
+        sourceTargetMap.put(converter.getSource() + ";" + converter.getTarget(), converter);
     }
 
     public boolean isConversionAvailable(String source, String target) {
@@ -40,7 +62,7 @@ public class ConverterService
 
     private Converter getConverter(String source, String target) {
         String key = source + ";" + target;
-        return converters.get(key.intern());
+        return sourceTargetMap.get(key.intern());
     }
 
     public ConverterResult convert(byte[] data, String source, String target, String filename, String sourceEncoding, String sourceLanguage) {
