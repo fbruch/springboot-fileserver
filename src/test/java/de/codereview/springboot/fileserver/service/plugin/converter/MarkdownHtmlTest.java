@@ -1,6 +1,6 @@
 package de.codereview.springboot.fileserver.service.plugin.converter;
 
-import de.codereview.springboot.fileserver.service.plugin.ConverterResult;
+import de.codereview.fileserver.api.v1.ConverterResult;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>de.codereview.fileserver.plugin.</groupId>
+  <groupId>de.codereview.fileserver.plugin</groupId>
   <artifactId>javahtml</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>
@@ -21,21 +21,8 @@
     <dependency>
       <groupId>de.codereview</groupId>
       <artifactId>fileserver-plugin-api</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1-SNAPSHOT</version>
     </dependency>
-    <!-- Service annotation -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-      <version>4.3.6.RELEASE</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
     <dependency>
       <groupId>com.j2html</groupId>
       <artifactId>j2html</artifactId>
@@ -68,7 +55,6 @@
               <artifactSet>
                 <excludes>
                   <exclude>de.codereview:fileserver-plugin-api</exclude>
-                  <exclude>org.springframework:spring-context</exclude>
                 </excludes>
               </artifactSet>
             </configuration>

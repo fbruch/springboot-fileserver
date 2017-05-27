@@ -1,7 +1,7 @@
 package de.codereview.springboot.fileserver.service.plugin.converter;
 
-import de.codereview.springboot.fileserver.service.plugin.Converter;
-import de.codereview.springboot.fileserver.service.plugin.ConverterResult;
+import de.codereview.fileserver.api.v1.Converter;
+import de.codereview.fileserver.api.v1.ConverterResult;
 import de.codereview.springboot.fileserver.service.plugin.PluginProperties;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.AttributesBuilder;

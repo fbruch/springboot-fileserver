@@ -1,0 +1,17 @@
+fileserver:
+  box:
+    roots:
+      - name: demo
+        path: src/test/resources/demo
+        encoding: UTF-8
+        language: en
+      - name: doc
+        path: src/test/resources/doc
+        encoding: utf-8
+        language: en
+  plugin:
+    converters:
+      - classname: de.codereview.fileserver.plugin.javahtml.JavaHtml
+        config: # prism | dark
+          theme: dark
+          line-numbers: true

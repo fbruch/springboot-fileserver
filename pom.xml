@@ -36,7 +36,7 @@
     <dependency>
       <groupId>de.codereview</groupId>
       <artifactId>fileserver-plugin-api</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1-SNAPSHOT</version>
     </dependency>
 
     <dependency>
@@ -151,6 +151,29 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <artifactSet>
+                <excludes>
+                </excludes>
+              </artifactSet>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+<!--
+
+      spring-boot-maven-plugin does not work with external JARs in this project:
+
+      <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <executions>
@@ -162,11 +185,16 @@
         </executions>
         <configuration>
           <mainClass>de.codereview.springboot.fileserver.Application</mainClass>
-          <layout>ZIP</layout>
-          <!-- The layout property defaults to a guess based on the archive type (JAR or WAR).
-               For the PropertiesLauncher the layout is "ZIP" -->
+          &lt;!&ndash;<layout>ZIP</layout>&ndash;&gt;
+          &lt;!&ndash; The layout property defaults to a guess based on the archive type (JAR or WAR).
+               For the PropertiesLauncher the layout is "ZIP" &ndash;&gt;
           <requiresUnpack>
-            <!-- Asciidoctor & Dependencies due to native content -->
+            &lt;!&ndash; just trying... &ndash;&gt;
+            <dependency>
+              <groupId>de.codereview</groupId>
+              <artifactId>fileserver-plugin-api</artifactId>
+            </dependency>
+            &lt;!&ndash; Asciidoctor & Dependencies due to native content &ndash;&gt;
             <dependency>
               <groupId>org.asciidoctor</groupId>
               <artifactId>asciidoctorj</artifactId>
@@ -182,6 +210,7 @@
           </requiresUnpack>
         </configuration>
       </plugin>
+-->
     </plugins>
   </build>
 
