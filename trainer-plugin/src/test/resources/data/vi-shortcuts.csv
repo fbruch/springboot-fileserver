@@ -1,0 +1,4 @@
+Movement;Go to beginning of line;^
+Movement;Go to end of line;$
+Movement;Move to beginning of next word;w
+Movement;Move to beginning of last word;b

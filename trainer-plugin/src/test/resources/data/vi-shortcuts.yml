@@ -1,0 +1,11 @@
+viewer:
+editor:
+runner: trainer
+  config:
+    training: Shortcuts for VI
+    question:
+      name: Action
+      column: 2
+    answer:
+      name: Shortcut
+      column: 3
