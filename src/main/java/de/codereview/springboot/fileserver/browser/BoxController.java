@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.HandlerMapping;
 
@@ -61,23 +62,25 @@ public class BoxController
     }
 
     @RequestMapping(value = "/fb/{box}/**", method = RequestMethod.GET)
-    public Object file(@PathVariable String box,
-                       HttpServletRequest request)
+    public Object file(@PathVariable String box, HttpServletRequest request,
+                       @RequestParam(name="recursive", required=false) String recursive)
     {
         String path = (String) request.getAttribute(
             HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
         // alternative: request.getServletPath();
 
-        path = path.substring(PREFIX_PATH_LENGTH + box.length() + 1);
-        FileResult fileResult = null;
+        path = path.substring(PREFIX_PATH_LENGTH + box.length()); // box root
+        if (path.startsWith("/")) path = path.substring(1); // subdir
+        FileResult fileResult;
         try {
-            fileResult = fileService.getFile(box, path);
+            fileResult = fileService.getFile(box, path, recursive!=null);
         } catch (IOException e) {
             String msg = "Error accessing file";
             log.error(msg, e);
             throw new RuntimeException(msg, e);
         }
         if (!fileResult.isDirectory()) {
+            // TODO: maybe only metadata as html?
             throw new RuntimeException("accessing files not implemented in browser api");
         } else {
             Path boxPath = fileService.getBoxPath(box);
