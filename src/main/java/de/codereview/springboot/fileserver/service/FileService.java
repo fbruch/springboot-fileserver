@@ -71,34 +71,29 @@ public class FileService
         return stream;
     }
 
-    public FileResult getFile(String box, String path) throws IOException
-    {
-        return getFile(box, path, false);
-    }
-
     public FileResult getFile(String box, String path, boolean recursive) throws IOException
     {
         return getFile(box, path, recursive, false);
     }
 
-    public FileResult getFile(String box, String path, boolean recursive, boolean stop) throws IOException
+    private FileResult getFile(String box, String path, boolean recursive, boolean stop) throws IOException
     {
         Path boxPath = getBoxPath(box.intern());
         if (boxPath == null) {
-            throw new RuntimeException("no such box");
+            throw new RuntimeException(String.format("unknown box: '%s'", box));
         }
-        Path filePath = boxPath.resolve(path);
-        boolean isDirectory = Files.isDirectory(filePath);
+        Path absPath = boxPath.resolve(path);
+        String filename;
+        if ("".equals(path)) {
+            filename = "";
+        } else {
+            filename = absPath.getFileName().toString();
+        }
         FileResult result;
-        if (! isDirectory) {
-            result = new FileResult(box, path, filePath.getFileName().toString(), isDirectory);
-            // TODO: limit file size to read in completely, config threshold
-            // TODO: otherwise stream...
-            byte[] bytes = readFile(filePath);
-            result.setContent(bytes);
-            result.setHeader(getFileMetadata(filePath));
-            result.getHeader().put(HttpHeaders.CONTENT_LENGTH, ""+bytes.length);
-            String mimeType = fileTypeService.detectMimeType(filePath);
+        if (! Files.isDirectory(absPath)) {
+            result = new FileResult(box, path, filename, false);
+            result.setHeader(getFileMetadata(absPath));
+            String mimeType = fileTypeService.detectMimeType(absPath);
             result.getHeader().put(HttpHeaders.CONTENT_TYPE, mimeType);
             boolean textual = fileTypeService.isTextual(mimeType);
             result.setTextual(textual);
@@ -108,10 +103,11 @@ public class FileService
             }
         } else if (! stop) {
             List<FileResult> files = new ArrayList<>();
-            getFileList(filePath).forEach(fpath -> {
+            getFileList(absPath).forEach(fpath -> {
                 try {
-                    FileResult fresult = getFile(box, fpath.toString(), recursive,
-                        recursive ? stop : true);
+                    Path relPath = boxPath.relativize(fpath);
+                    FileResult fresult = getFile(box, relPath.toString(),
+                        recursive, recursive ? false : true);
                     fresult.setBox(null);
                     fresult.setParentPath(null);
                     files.add(fresult);
@@ -120,14 +116,34 @@ public class FileService
                     // TODO
                 }
             });
-            result = new DirResult(box, path, filePath.getFileName().toString(), files);
-            // TODO: result.setHeader(getDirMetadata(filePath)); // from metadata file...
+            result = new DirResult(box, path, filename, files);
+            // TODO: result.setHeader(getDirMetadata(absPath)); // from metadata file...
         } else {
-            result = new FileResult(box, path, filePath.getFileName().toString(), true);
-            // TODO: result.setHeader(getDirMetadata(filePath)); // from metadata file...
+            result = new FileResult(box, path, filename, true);
+            // TODO: result.setHeader(getDirMetadata(absPath)); // from metadata file...
         }
-        result.setParentPath(boxPath.relativize(filePath.getParent()).toString());
+        if (".".equals(filename) || "".equals(filename)) {
+            result.setParentPath(null);
+        } else {
+            String parentPath = boxPath.relativize(absPath.getParent()).toString();
+            if ("..".equals(parentPath)) {
+                parentPath = null;
+            }
+            result.setParentPath(parentPath);
+        }
         return result;
+    }
+
+    public byte[] readFile(FileResult fileResult) throws IOException
+    {
+        Path boxPath = getBoxPath(fileResult.getBox());
+        Path filePath;
+        if ("".equals(fileResult.getParentPath())) {
+            filePath = boxPath.resolve(fileResult.getFilename());
+        } else {
+            filePath = boxPath.resolve(fileResult.getParentPath() + "/" + fileResult.getFilename());
+        }
+        return readFile(filePath);
     }
 
     byte[] readFile(Path filePath) throws IOException
@@ -178,4 +194,5 @@ public class FileService
 //        }
         return lang;
     }
+
 }

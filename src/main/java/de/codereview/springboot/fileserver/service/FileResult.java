@@ -15,9 +15,6 @@ public class FileResult
     private String encoding;
     private String language;
 
-    @JsonIgnore
-    private byte[] content;
-
     private Map<String, String> header = new HashMap<>();
 
     @JsonIgnore
@@ -50,16 +47,6 @@ public class FileResult
     public void setEncoding(String encoding)
     {
         this.encoding = encoding;
-    }
-
-    public byte[] getContent()
-    {
-        return content;
-    }
-
-    public void setContent(byte[] content)
-    {
-        this.content = content;
     }
 
     public Map<String, String> getHeader()

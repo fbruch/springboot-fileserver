@@ -11,7 +11,7 @@ import java.util.Map;
  * Thanks, https://blog.jdriven.com/2016/06/spicy-spring-custom-error-json-response-with-errorattributes/
  */
 @Component
-public class MyCustomErrorAttributes extends DefaultErrorAttributes {
+public class ErrorAttributes extends DefaultErrorAttributes {
 
 	@Override
 	public Map<String, Object> getErrorAttributes(RequestAttributes requestAttributes, boolean includeStackTrace) {

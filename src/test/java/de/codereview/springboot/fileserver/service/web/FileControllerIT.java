@@ -6,11 +6,15 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.MimeType;
 
 import java.nio.charset.Charset;
 
@@ -21,6 +25,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("dev")
 public class FileControllerIT
 {
+    private static final String MARKDOWN_FILE_PATH = "/app/src/test/resources/demo/markup/text-markdown.md";
+    private static final String ASCIIDOC_FILE_PATH = "/app/src/test/resources/demo/markup/text-asciidoc.adoc";
+
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -36,7 +43,7 @@ public class FileControllerIT
     @Test
     public void markdown() {
         ResponseEntity<String> entity = restTemplate.getForEntity(
-            "/fs/app/src/test/resources/demo/markup/text-markdown.md", String.class);
+            MARKDOWN_FILE_PATH, String.class);
 
         assertThat(entity.getStatusCode()).isEqualTo(HttpStatus.OK);
 
@@ -49,13 +56,39 @@ public class FileControllerIT
     @Test
     public void asciidoc() {
         ResponseEntity<String> entity = restTemplate.getForEntity(
-            "/fs/app/src/test/resources/demo/markup/text-asciidoc.adoc", String.class);
+            ASCIIDOC_FILE_PATH, String.class);
 
         assertThat(entity.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         MediaType contentType = entity.getHeaders().getContentType();
         assertThat(contentType.getType()).isEqualTo("text");
         assertThat(contentType.getSubtype()).isEqualTo("asciidoc");
+        assertThat(contentType.getCharset()).isEqualTo(Charset.forName("UTF8"));
+    }
+
+    @Test
+    public void markdownAsHtml() {
+        convertedToHtml(MARKDOWN_FILE_PATH);
+    }
+
+    @Test
+    public void asciidocAsHtml() {
+        convertedToHtml(ASCIIDOC_FILE_PATH);
+    }
+
+    void convertedToHtml(String asciidocFilePath)
+    {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.ACCEPT, MediaType.TEXT_HTML_VALUE);
+        ResponseEntity<String> entity = restTemplate.exchange(
+            asciidocFilePath, HttpMethod.GET,
+            new HttpEntity<>(headers), String.class);
+
+        assertThat(entity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        MediaType contentType = entity.getHeaders().getContentType();
+        assertThat(contentType.getType()).isEqualTo("text");
+        assertThat(contentType.getSubtype()).isEqualTo("html");
         assertThat(contentType.getCharset()).isEqualTo(Charset.forName("UTF8"));
     }
 }

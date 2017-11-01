@@ -66,14 +66,14 @@ public class JavaHtml implements Converter
             .with(header().with(
                 meta().attr("charset").withValue("utf-8")).with(
                 title(filename)).with(
-                link().withHref("/" + config + "/prism.css")
+                link().withHref("/static/" + config + "/prism.css")
                     .withRel("stylesheet").withType(("text/css"))
                     .attr("media").withValue("screen")))
             .with(body().with(
                 pre.with(
                     tag("code").withClass("language-java")
                         .withText(new String(source, sourceEncoding)))).with(
-                script().withSrc("/" + config + "/prism.js")
+                script().withSrc("/static/" + config + "/prism.js")
             )).render();
 
         ConverterResult result = new ConverterResult(
