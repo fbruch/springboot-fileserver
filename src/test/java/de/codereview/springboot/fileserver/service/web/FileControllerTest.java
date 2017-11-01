@@ -1,8 +1,8 @@
 package de.codereview.springboot.fileserver.service.web;
 
+import de.codereview.fileserver.api.v1.ConverterResult;
 import de.codereview.springboot.fileserver.service.FileResult;
 import de.codereview.springboot.fileserver.service.FileService;
-import de.codereview.springboot.fileserver.service.plugin.ConverterResult;
 import de.codereview.springboot.fileserver.service.plugin.ConverterService;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +22,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import javax.activation.MimeType;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;

@@ -1,11 +1,16 @@
 package de.codereview.springboot.fileserver.service;
 
+import de.codereview.fileserver.api.v1.Converter;
 import de.codereview.springboot.fileserver.service.plugin.converter.AsciidocHtml;
 import de.codereview.springboot.fileserver.service.plugin.ConverterService;
+import de.codereview.springboot.fileserver.service.plugin.converter.MarkdownHtml;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -19,7 +24,9 @@ public class ConverterServiceTest
         AsciidocHtml asciidoc = Mockito.mock(AsciidocHtml.class);
         BDDMockito.given(asciidoc.getSource()).willReturn("text/asciidoc");
         BDDMockito.given(asciidoc.getTarget()).willReturn("text/html");
-        service = new ConverterService(asciidoc);
+        List<Converter> converters = new ArrayList<>();
+        converters.add(new MarkdownHtml());
+        service = new ConverterService(asciidoc, converters, null);
     }
 
     @Test

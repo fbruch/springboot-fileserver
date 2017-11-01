@@ -1,0 +1,7 @@
+fileserver:
+  box:
+    roots:
+      - name: app
+        path: .
+      - name: downloads
+        path: ${user.home}/Downloads

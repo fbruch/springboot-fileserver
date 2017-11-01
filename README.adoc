@@ -1,48 +1,58 @@
 = springboot-fileserver
 
-REST-style File Server being realized with Java and Spring Boot.
+Desktop File Server being realized with Java and Spring Boot.
 
 # Goals
 
 1. Personal Reference Project for Spring Boot
-1. Backend for upcoming Personal Text Management System
+1. Backend for upcoming Desktop Data Management Application
 
-# Status (Pre-Alpha)
+# Status (Alpha)
 
 * No installable build, no license selected
-* Single user, no security --> localhost only
-* Serving all files from configurable directories
+* Serving all files from configured directory roots
 * Simple explorer-like navigation into document roots ("boxes" and their sub-directories to support interactive testing
 * Mime-type detection using Apache Tika
 * Http-Header for file-based metadata
 * Automatic rendering of Markdown and Asciidoctor to HTML
 
 ## Test / Development
+
 * Java 8, Maven 3.3
-* Configure document roots in `application.yml`
+* Configure document roots in `application-run.yml`
 ** Defaults to roots `demo` and `doc` below `src/test/resources`
-* Start using `Application.class`, `mvn spring-boot:run` or `buildnrun.sh`)
+* Start using `buildnrun.sh`
 * Point your browser to `http://localhost:8001`
 
 # Future
 
 ## Milestone 1 (Read Only, Plain Text, Markup Rendering)
 * Serving text files with mimetype and file-based metadata
+* Explicit and implicit metadata for files and directories
 * Automatic rendering of markdown and asciidoctor to html
-* Maybe specific support for some other textual content, `csv`, atom-feeds,  e. g.
 * Experimental: Full text search
 
 ## Milestone 2 (Binary files)
+
 * Documents, Music, Images, Videos
+* Extracting text from office documents
+* Creating PDF files from text or markup
 * Content-based metadata (id3, exif, ...)
 * Streaming large files
 
 ## Milestone 3 (Create/Update/Delete, Version History)
+
 * Create new files, update or delete existing files
 * Experimental: Automatic Version Control using git
-** Providing file histories as atom feeds
+
+## Potential Future Milestones (Multi-User Server-Usage)
+
+* Authentication
+* Authorization
+* Sharing, Collaborative editing
 
 # Credits
+
 * http://www.oracle.com/technetwork/java/javase/overview/index.html[Java 8], https://projects.spring.io/spring-boot/[Spring Boot]
 * https://tika.apache.org/[Apache Tika] (Parsing, Type detection)
 * https://github.com/vsch/flexmark-java[flexmark-java] (Markdown)

@@ -1,4 +1,4 @@
-package de.codereview.springboot.fileserver.service.plugin;
+package de.codereview.fileserver.api.v1;
 
 import java.io.UnsupportedEncodingException;
 
