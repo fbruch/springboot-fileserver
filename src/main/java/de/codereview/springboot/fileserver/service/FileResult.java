@@ -1,18 +1,24 @@
 package de.codereview.springboot.fileserver.service;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import java.util.HashMap;
 import java.util.Map;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class FileResult
 {
     private String box;
     private String parentPath;
     private String filename;
-    private String mimeType;
-    private boolean textual;
     private String encoding;
-    private byte[] content;
-    private Map<String, String> metadata;
     private String language;
+
+    private Map<String, String> header = new HashMap<>();
+
+    @JsonIgnore
+    private boolean textual;
     private boolean directory;
 
     public FileResult(String box, String path, String filename, boolean directory)
@@ -33,16 +39,6 @@ public class FileResult
         this.parentPath = path;
     }
 
-    public String getMimeType()
-    {
-        return mimeType;
-    }
-
-    public void setMimeType(String mimeType)
-    {
-        this.mimeType = mimeType;
-    }
-
     public String getEncoding()
     {
         return encoding;
@@ -53,24 +49,14 @@ public class FileResult
         this.encoding = encoding;
     }
 
-    public byte[] getContent()
+    public Map<String, String> getHeader()
     {
-        return content;
+        return header;
     }
 
-    public void setContent(byte[] content)
+    public void setHeader(Map<String, String> header)
     {
-        this.content = content;
-    }
-
-    public Map<String, String> getMetadata()
-    {
-        return metadata;
-    }
-
-    public void setMetadata(Map<String, String> metadata)
-    {
-        this.metadata = metadata;
+        this.header = header;
     }
 
     public boolean isTextual()

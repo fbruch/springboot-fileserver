@@ -1,6 +1,7 @@
 package de.codereview.springboot.fileserver.service;
 
 import de.codereview.fileserver.api.v1.Converter;
+import de.codereview.springboot.fileserver.service.plugin.PluginProperties;
 import de.codereview.springboot.fileserver.service.plugin.converter.AsciidocHtml;
 import de.codereview.springboot.fileserver.service.plugin.ConverterService;
 import de.codereview.springboot.fileserver.service.plugin.converter.MarkdownHtml;
@@ -8,12 +9,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
 
+@ActiveProfiles("dev")
 public class ConverterServiceTest
 {
     ConverterService service;
@@ -26,7 +29,7 @@ public class ConverterServiceTest
         BDDMockito.given(asciidoc.getTarget()).willReturn("text/html");
         List<Converter> converters = new ArrayList<>();
         converters.add(new MarkdownHtml());
-        service = new ConverterService(asciidoc, converters, null);
+        service = new ConverterService(asciidoc, converters, new PluginProperties());
     }
 
     @Test

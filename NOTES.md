@@ -16,7 +16,7 @@
   * Output
     * FileResult w/ MimeType
     * more meta?
-* Multiple input minme types
+* Multiple input mine types
 * Logical name
     
 ## Next Steps
@@ -138,8 +138,6 @@ http://discuss.asciidoctor.org/
 
 * TODO without external references (fonts.googleapis.com)
 ** http://discuss.asciidoctor.org/Using-Font-Awesome-offline-td1831.html
-* asciidoctor->pdf
-* asciidoctor->epub3
 
 * md/adoc with embedded images, includes and maybe dialects
 * Trigger conversion by 2nd suffix (song.mp3.txt) in addition to accept header
@@ -152,20 +150,26 @@ http://discuss.asciidoctor.org/
 
 * html->pdf using https://github.com/danfickle/openhtmltopdf
 * text->pdf using pdfbox
-** https://pdfbox.apache.org/[Apache PDFBox]
+  * https://pdfbox.apache.org/[Apache PDFBox]
 * pdf->text using tika (w/ pdfbox)
 
 * html->txt using tika (w/ tagsoup)
 
 * rtf & doc/xsl/ppt & odt/ods/odp -> txt using tika (using Apache POI and...)
-** https://dzone.com/articles/using-apache-poi-to-read-excel
+  * https://dzone.com/articles/using-apache-poi-to-read-excel
 
 * dir|file -> zip using java
+
+#### Diagrams
+http://asciidoctor.org/docs/asciidoctor-diagram/
+https://stackoverflow.com/questions/34882425/how-to-use-asciidoctorj-diagram-with-java-or-groovy
+TODO: mermaid
+https://searx.me/?q=asciidoctor%20invalid%20style%20for%20paragraph%20%2Bmermaid&categories=general
 
 ### CSV
 
 * csv->html using univocity-parsers and custom rendering
-** https://github.com/uniVocity/univocity-parsers[univocity-parsers] (csv)
+  * https://github.com/uniVocity/univocity-parsers[univocity-parsers] (csv)
 * csv/xls with Apache POI
 * https://super-csv.github.io/super-csv/index.html
 * barchart geeration sample: http://www.d3-generator.com/
@@ -186,18 +190,18 @@ http://discuss.asciidoctor.org/
 ## Eventually
 
 * integrate/sync/backup (API-gateway?) with external services (storage, bookmarks, notes etc.)
-** Simplenote, Pinboard, Github gists
+  * Simplenote, Pinboard, Github gists
 * diff-servie using e. g. https://diffoscope.org/
 * image conversion
 
 # Ideas
 
 * Content adressing
-** `git cat-file -p fa9296bc9428a251d92f6dfd1de20cf138addf8b`
+  * `git cat-file -p fa9296bc9428a251d92f6dfd1de20cf138addf8b`
 * URIs to survive document renaming
-** use history and send "moved permanently"
-** use IDs for addressing and allow titles as unused comments
-*** domain.tld/parent/permament-techkey/-optional-businesskey-title-which-is-ignored
+  * use history and send "moved permanently"
+  * use IDs for addressing and allow titles as unused comments
+    * domain.tld/parent/permament-techkey/-optional-businesskey-title-which-is-ignored
 
 ## Notes / References
 

@@ -2,12 +2,12 @@
 
 Desktop File Server being realized with Java and Spring Boot.
 
-# Goals
+== Goals
 
 1. Personal Reference Project for Spring Boot
 1. Backend for upcoming Desktop Data Management Application
 
-# Status (Alpha)
+== Status (Alpha)
 
 * No installable build, no license selected
 * Serving all files from configured directory roots
@@ -16,7 +16,7 @@ Desktop File Server being realized with Java and Spring Boot.
 * Http-Header for file-based metadata
 * Automatic rendering of Markdown and Asciidoctor to HTML
 
-## Test / Development
+==== Test / Development
 
 * Java 8, Maven 3.3
 * Configure document roots in `application-run.yml`
@@ -24,15 +24,15 @@ Desktop File Server being realized with Java and Spring Boot.
 * Start using `buildnrun.sh`
 * Point your browser to `http://localhost:8001`
 
-# Future
+== Future
 
-## Milestone 1 (Read Only, Plain Text, Markup Rendering)
+==== Milestone 1 (Read Only, Plain Text, Markup Rendering)
 * Serving text files with mimetype and file-based metadata
 * Explicit and implicit metadata for files and directories
 * Automatic rendering of markdown and asciidoctor to html
 * Experimental: Full text search
 
-## Milestone 2 (Binary files)
+==== Milestone 2 (Binary files)
 
 * Documents, Music, Images, Videos
 * Extracting text from office documents
@@ -40,18 +40,18 @@ Desktop File Server being realized with Java and Spring Boot.
 * Content-based metadata (id3, exif, ...)
 * Streaming large files
 
-## Milestone 3 (Create/Update/Delete, Version History)
+==== Milestone 3 (Create/Update/Delete, Version History)
 
 * Create new files, update or delete existing files
 * Experimental: Automatic Version Control using git
 
-## Potential Future Milestones (Multi-User Server-Usage)
+==== Potential Future Milestones (Multi-User Server-Usage)
 
 * Authentication
 * Authorization
 * Sharing, Collaborative editing
 
-# Credits
+== Credits
 
 * http://www.oracle.com/technetwork/java/javase/overview/index.html[Java 8], https://projects.spring.io/spring-boot/[Spring Boot]
 * https://tika.apache.org/[Apache Tika] (Parsing, Type detection)

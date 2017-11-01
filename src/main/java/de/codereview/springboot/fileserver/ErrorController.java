@@ -2,7 +2,6 @@ package de.codereview.springboot.fileserver;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.ErrorAttributes;
-import org.springframework.boot.autoconfigure.web.ErrorController;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,13 +16,13 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/error")
-public class MyCustomErrorController implements ErrorController
+public class ErrorController implements org.springframework.boot.autoconfigure.web.ErrorController
 {
 
 	private final ErrorAttributes errorAttributes;
 
 	@Autowired
-	public MyCustomErrorController(ErrorAttributes errorAttributes)
+	public ErrorController(ErrorAttributes errorAttributes)
 	{
 		Assert.notNull(errorAttributes, "ErrorAttributes must not be null");
 		this.errorAttributes = errorAttributes;

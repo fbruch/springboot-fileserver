@@ -14,7 +14,9 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -45,7 +47,7 @@ public class FileService
     private FileServiceConfig.Root process(FileServiceConfig.Root root)
     {
         FileServiceConfig.Root clone = (FileServiceConfig.Root) root.clone();
-        if (root.getEncoding()!=null) {
+        if (root.getEncoding() != null) {
             // normalize encoding name
             root.setEncoding(Charset.forName(root.getEncoding()).name());
         }
@@ -64,39 +66,84 @@ public class FileService
 
     public Stream<Path> getFileList(Path dirPath) throws IOException
     {
-        Stream<Path> stream = Files.list(dirPath);
+        // TODO: configurable exclude filters
+        Stream<Path> stream = Files.list(dirPath).filter(path -> ! path.toFile().getName().startsWith("."));
         return stream;
     }
 
-    public FileResult getFile(String box, String path) throws IOException
+    public FileResult getFile(String box, String path, boolean recursive) throws IOException
+    {
+        return getFile(box, path, recursive, false);
+    }
+
+    private FileResult getFile(String box, String path, boolean recursive, boolean stop) throws IOException
     {
         Path boxPath = getBoxPath(box.intern());
-        if (boxPath==null) {
-            throw new RuntimeException("no such box");
+        if (boxPath == null) {
+            throw new RuntimeException(String.format("unknown box: '%s'", box));
         }
-        Path filePath = boxPath.resolve(path);
-        boolean isDirectory = Files.isDirectory(filePath);
-        FileResult result = new FileResult(box, path, filePath.getFileName().toString(), isDirectory);
-        result.setParentPath(boxPath.relativize(filePath.getParent()).toString());
-        if (!isDirectory) {
-            // TODO: limit file size to read in completely, config threshold
-            // TODO: otherwise stream...
-            byte[] bytes = readFile(filePath);
-            result.setContent(bytes);
-            result.setMetadata(getFileMetadata(filePath));
-            String mimeType = fileTypeService.detectMimeType(filePath);
-            result.setMimeType(mimeType);
+        Path absPath = boxPath.resolve(path);
+        String filename;
+        if ("".equals(path)) {
+            filename = "";
+        } else {
+            filename = absPath.getFileName().toString();
+        }
+        FileResult result;
+        if (! Files.isDirectory(absPath)) {
+            result = new FileResult(box, path, filename, false);
+            result.setHeader(getFileMetadata(absPath));
+            String mimeType = fileTypeService.detectMimeType(absPath);
+            result.getHeader().put(HttpHeaders.CONTENT_TYPE, mimeType);
             boolean textual = fileTypeService.isTextual(mimeType);
             result.setTextual(textual);
             result.setLanguage(getBoxLanguage(box));
             if (textual) {
                 result.setEncoding(getBoxEncoding(box));
             }
+        } else if (! stop) {
+            List<FileResult> files = new ArrayList<>();
+            getFileList(absPath).forEach(fpath -> {
+                try {
+                    Path relPath = boxPath.relativize(fpath);
+                    FileResult fresult = getFile(box, relPath.toString(),
+                        recursive, recursive ? false : true);
+                    fresult.setBox(null);
+                    fresult.setParentPath(null);
+                    files.add(fresult);
+                } catch (IOException e) {
+                    log.warn(e.getMessage(), e);
+                    // TODO
+                }
+            });
+            result = new DirResult(box, path, filename, files);
+            // TODO: result.setHeader(getDirMetadata(absPath)); // from metadata file...
         } else {
-            result.setDirectory(true);
-            // TODO: result.setMetadata(getDirMetadata(filePath));
+            result = new FileResult(box, path, filename, true);
+            // TODO: result.setHeader(getDirMetadata(absPath)); // from metadata file...
+        }
+        if (".".equals(filename) || "".equals(filename)) {
+            result.setParentPath(null);
+        } else {
+            String parentPath = boxPath.relativize(absPath.getParent()).toString();
+            if ("..".equals(parentPath)) {
+                parentPath = null;
+            }
+            result.setParentPath(parentPath);
         }
         return result;
+    }
+
+    public byte[] readFile(FileResult fileResult) throws IOException
+    {
+        Path boxPath = getBoxPath(fileResult.getBox());
+        Path filePath;
+        if ("".equals(fileResult.getParentPath())) {
+            filePath = boxPath.resolve(fileResult.getFilename());
+        } else {
+            filePath = boxPath.resolve(fileResult.getParentPath() + "/" + fileResult.getFilename());
+        }
+        return readFile(filePath);
     }
 
     byte[] readFile(Path filePath) throws IOException
@@ -127,7 +174,7 @@ public class FileService
     String getBoxEncoding(String box)
     {
         String encoding = boxes.get(box).getEncoding();
-        if (encoding==null) {
+        if (encoding == null) {
             encoding = Charset.defaultCharset().name();
 //        encoding = System.getProperty("file.encoding");
         }
@@ -147,4 +194,5 @@ public class FileService
 //        }
         return lang;
     }
+
 }

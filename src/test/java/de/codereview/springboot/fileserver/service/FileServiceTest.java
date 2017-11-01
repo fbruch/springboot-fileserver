@@ -3,6 +3,7 @@ package de.codereview.springboot.fileserver.service;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.http.HttpHeaders;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -14,8 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class FileServiceTest
 {
-
-    static final String BOX = "demo";
+    static final String BOX = "DUMMY";
 
     private FileService service;
 
@@ -30,11 +30,27 @@ public class FileServiceTest
     }
 
  	@Test
-    public void directory() throws IOException
+    public void boxRootdirectoryNonRecursive() throws IOException
     {
-        Mockito.when(fileTypeService.detectMimeType(Mockito.any())).thenThrow(new RuntimeException());
-        Mockito.when(fileTypeService.isTextual(Mockito.any())).thenThrow(new RuntimeException());
-        FileResult result = service.getFile(BOX, "src");
+        Mockito.when(fileTypeService.detectMimeType(Mockito.any())).thenReturn("text/plain");
+        Mockito.when(fileTypeService.isTextual(Mockito.any())).thenReturn(true);
+        FileResult result = service.getFile(BOX, "", false);
+        assertThat(result.getFilename()).isEqualTo("");
+        assertThat(result.getBox()).isEqualTo(BOX);
+        assertThat(result.getEncoding()).isNull();
+        assertThat(result.getParentPath()).isNull();
+        assertThat(result.getLanguage()).isNull();
+        assertThat(result.isTextual()).isFalse();
+        assertThat(result.isDirectory()).isTrue();
+        assertThat(result.getHeader().get(HttpHeaders.CONTENT_TYPE)).isNull();
+    }
+
+ 	@Test
+    public void directoryNonRecursive() throws IOException
+    {
+        Mockito.when(fileTypeService.detectMimeType(Mockito.any())).thenReturn("text/plain");
+        Mockito.when(fileTypeService.isTextual(Mockito.any())).thenReturn(true);
+        FileResult result = service.getFile(BOX, "src", false);
         assertThat(result.getFilename()).isEqualTo("src");
         assertThat(result.getBox()).isEqualTo(BOX);
         assertThat(result.getEncoding()).isNull();
@@ -42,8 +58,7 @@ public class FileServiceTest
         assertThat(result.getLanguage()).isNull();
         assertThat(result.isTextual()).isFalse();
         assertThat(result.isDirectory()).isTrue();
-        assertThat(result.getMimeType()).isNull();
-        assertThat(result.getContent()).isNull();
+        assertThat(result.getHeader().get(HttpHeaders.CONTENT_TYPE)).isNull();
     }
 
     @Test
@@ -52,7 +67,7 @@ public class FileServiceTest
         String MIME_TYPE = "text/csv";
         Mockito.when(fileTypeService.detectMimeType(Mockito.any())).thenReturn(MIME_TYPE);
         Mockito.when(fileTypeService.isTextual(Mockito.any())).thenReturn(true);
-        FileResult result = service.getFile(BOX, "data/subdir/text-csv.csv");
+        FileResult result = service.getFile(BOX, "data/subdir/text-csv.csv", false);
         assertThat(result.getFilename()).isEqualTo("text-csv.csv");
         assertThat(result.getBox()).isEqualTo(BOX);
         assertThat(result.getEncoding()).isEqualTo(Charset.defaultCharset().name());
@@ -60,8 +75,7 @@ public class FileServiceTest
         assertThat(result.getLanguage()).isNull();
         assertThat(result.isTextual()).isTrue();
         assertThat(result.isDirectory()).isFalse();
-        assertThat(result.getMimeType()).isEqualTo(MIME_TYPE);
-        assertThat(result.getContent()).isNotEmpty();
+        assertThat(result.getHeader().get(HttpHeaders.CONTENT_TYPE)).isEqualTo(MIME_TYPE);
     }
 
     @Test
@@ -70,7 +84,7 @@ public class FileServiceTest
         String MIME_TYPE = "image/jpeg";
         Mockito.when(fileTypeService.detectMimeType(Mockito.any())).thenReturn(MIME_TYPE);
         Mockito.when(fileTypeService.isTextual(Mockito.any())).thenReturn(false);
-        FileResult result = service.getFile(BOX, "media/image-jpeg.jpg");
+        FileResult result = service.getFile(BOX, "media/image-jpeg.jpg", false);
         assertThat(result.getFilename()).isEqualTo("image-jpeg.jpg");
         assertThat(result.getBox()).isEqualTo(BOX);
         assertThat(result.getEncoding()).isNull();
@@ -78,8 +92,7 @@ public class FileServiceTest
         assertThat(result.getLanguage()).isNull();
         assertThat(result.isTextual()).isFalse();
         assertThat(result.isDirectory()).isFalse();
-        assertThat(result.getMimeType()).isEqualTo("image/jpeg");
-        assertThat(result.getContent()).hasSize(17148);
+        assertThat(result.getHeader().get(HttpHeaders.CONTENT_TYPE)).isEqualTo("image/jpeg");
     }
 
     @Test
