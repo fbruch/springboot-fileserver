@@ -132,6 +132,10 @@ https://stackoverflow.com/questions/12544433/parsing-mbox-file-in-java
 * js-sequence-diagrams
 * ...
 
+### Markdown
+http://commonmark.org/
+or github flavored?
+
 ### Asciidoctor
 https://github.com/asciidoctor/asciidoctorj
 http://discuss.asciidoctor.org/
@@ -196,7 +200,14 @@ https://searx.me/?q=asciidoctor%20invalid%20style%20for%20paragraph%20%2Bmermaid
 
 # Ideas
 
-* Content adressing
+## Cool URIs don't change
+* Searches redirect to URLs containing current timestamp. When visiting the URL again 
+  1. the timestamp is ignored and a search-result for the current content is returned
+  2. the result includes a link to historic and current search-result, like Google:
+     - Showing results for ... (current link)
+     - Search instead for ... (historic link)
+
+## Content adressing
   * `git cat-file -p fa9296bc9428a251d92f6dfd1de20cf138addf8b`
 * URIs to survive document renaming
   * use history and send "moved permanently"

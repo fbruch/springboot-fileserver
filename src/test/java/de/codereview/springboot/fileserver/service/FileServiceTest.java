@@ -10,6 +10,9 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -21,15 +24,16 @@ public class FileServiceTest
 
     private FileTypeService fileTypeService;
 
-	@Before
-    public void setUp() {
+    @Before
+    public void setUp()
+    {
         fileTypeService = Mockito.mock(FileTypeService.class);
-	    FileServiceConfig config = new FileServiceConfig();
-	    config.getRoots().add(new FileServiceConfig.Root(BOX, "src/test/resources/demo"));
-	    service = new FileService(config, fileTypeService);
+        FileServiceConfig config = new FileServiceConfig();
+        config.getRoots().add(new FileServiceConfig.Root(BOX, "src/test/resources/demo"));
+        service = new FileService(config, fileTypeService);
     }
 
- 	@Test
+    @Test
     public void boxRootdirectoryNonRecursive() throws IOException
     {
         Mockito.when(fileTypeService.detectMimeType(Mockito.any())).thenReturn("text/plain");
@@ -45,7 +49,7 @@ public class FileServiceTest
         assertThat(result.getHeader().get(HttpHeaders.CONTENT_TYPE)).isNull();
     }
 
- 	@Test
+    @Test
     public void directoryNonRecursive() throws IOException
     {
         Mockito.when(fileTypeService.detectMimeType(Mockito.any())).thenReturn("text/plain");
@@ -100,8 +104,24 @@ public class FileServiceTest
     {
         final Path FILE_PATH = Paths.get("src/test/resources/demo/media/image-jpeg.jpg");
         byte[] result = service.readFile(FILE_PATH);
-        org.junit.Assert.assertThat((long)result.length,
+        org.junit.Assert.assertThat((long) result.length,
             org.hamcrest.Matchers.equalTo(Files.size(FILE_PATH)));
+    }
+
+    @Test
+    public void getFileMetadata() throws IOException
+    {
+        final Path FILE_PATH = Paths.get("src/test/resources/demo/media/the world in my hands.mp3");
+//        final Path FILE_PATH = Paths.get("src/test/resources/demo/media/the%20world%20in%20my%20hands.mp3");
+        Map<String, String> result = service.getFileMetadata(FILE_PATH);
+        String expected = DateTimeFormatter.RFC_1123_DATE_TIME
+            .withZone(ZoneOffset.UTC).format(Files.getLastModifiedTime(FILE_PATH).toInstant());
+
+        org.junit.Assert.assertThat(result.get("Last-Modified"),
+            org.hamcrest.Matchers.equalTo(expected));
+        // TODO: size
+//        org.junit.Assert.assertThat(result.get("Last-Modified"),
+//            org.hamcrest.Matchers.equalTo(Files.size(FILE_PATH)));
     }
 
 }

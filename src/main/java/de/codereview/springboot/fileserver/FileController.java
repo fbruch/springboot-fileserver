@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-//@RestController
+//@RestController // downloadFile ohne @RequestBody...
 @Controller
 @RequestMapping("/")
 public class FileController
@@ -48,20 +48,22 @@ public class FileController
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/static/**", method = RequestMethod.GET)
-    public void downloadFile(HttpServletRequest request, HttpServletResponse response) {
+    public void downloadFile(HttpServletRequest request, HttpServletResponse response)
+    {
         String path = request.getRequestURI();
         try {
             byte[] fileContent = IOUtils.toByteArray(
-				FileController.class.getResourceAsStream(path));
+                FileController.class.getResourceAsStream(path));
             response.getOutputStream().write(fileContent);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.warn("Error loading resource from static path '{}'", path, e);
         }
     }
 
     @Autowired
     public FileController(FileService fileService, ConverterService converterService,
-                          HtmlService htmlService, List<Endpoint> endpoints) {
+                          HtmlService htmlService, List<Endpoint> endpoints)
+    {
         this.fileService = fileService;
         this.converterService = converterService;
         this.htmlService = htmlService;
@@ -80,7 +82,7 @@ public class FileController
         builder.append("</h2><ul>");
         fileService.getBoxList().forEach(box ->
             builder.append(String.format("<li><a href=\"%s\">%s</a></li>",
-                "http://localhost:8001/"+box, box)));
+                "http://localhost:8001/" + box, box)));
         builder.append("</ul><h3>");
         builder.append("Spring Boot Actuator");
         builder.append("</h3><ul>");
@@ -102,7 +104,7 @@ public class FileController
         log.debug("accessing '{}' from box '{}'", relpath, box);
 
         try {
-            FileResult fileResult = fileService.getFile(box, relpath, recursive!=null);
+            FileResult fileResult = fileService.getFile(box, relpath, recursive != null);
             if (fileResult.isDirectory()) {
                 throw new RuntimeException("accessing directories only as application/json or text/html");
             } else {
@@ -110,7 +112,7 @@ public class FileController
 
                 NegotiationResult negResult = negotiateResponseFormat(fileResult, header);
 
-                fileResult.getHeader().put(HttpHeaders.CONTENT_LENGTH, ""+negResult.content.length);
+                fileResult.getHeader().put(HttpHeaders.CONTENT_LENGTH, "" + negResult.content.length);
 
                 fileResult.getHeader().forEach(response::setHeader);
 
@@ -134,11 +136,11 @@ public class FileController
         String relpath = getRelativePathInBox(box, request);
         log.debug("accessing '{}' from box '{}'", relpath, box);
         try {
-            FileResult fileResult = fileService.getFile(box, relpath, recursive!=null);
+            FileResult fileResult = fileService.getFile(box, relpath, recursive != null);
             if (fileResult.isDirectory()) {
                 Path boxPath = fileService.getBoxPath(box);
                 Path filePath;
-                if (fileResult.getParentPath()==null) { // box root
+                if (fileResult.getParentPath() == null) { // box root
                     filePath = boxPath;
                 } else {
                     Path parentPath = boxPath.resolve(fileResult.getParentPath());
@@ -164,7 +166,7 @@ public class FileController
         String relpath = getRelativePathInBox(box, request);
         log.debug("accessing '{}' from box '{}'", relpath, box);
         try {
-            FileResult fileResult = fileService.getFile(box, relpath, recursive!=null);
+            FileResult fileResult = fileService.getFile(box, relpath, recursive != null);
             if (fileResult.isDirectory()) {
                 String json = new ObjectMapper().writeValueAsString(fileResult);
                 response.setHeader(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8");
@@ -185,24 +187,24 @@ public class FileController
         String url = request.getRequestURL().toString(); // "http://localhost:8001/fs/box/..."
         String orgMimeType = fileResult.getHeader().get(HttpHeaders.CONTENT_TYPE);
         String newMimeType = negResult.mimetype;
-        if (! Objects.equals(newMimeType, orgMimeType)) {
-			response.setHeader(HttpHeaders.LINK,
-				"<" + url + ">; rel=\"alternate\";type=\"" + orgMimeType + "\"");
-		}
+        if (!Objects.equals(newMimeType, orgMimeType)) {
+            response.setHeader(HttpHeaders.LINK,
+                "<" + url + ">; rel=\"alternate\";type=\"" + orgMimeType + "\"");
+        }
         if (fileResult.isTextual()) {
-			response.setHeader(HttpHeaders.CONTENT_TYPE, newMimeType
-				+ ";charset=" + negResult.encoding);
-			response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
-				"filename=" + negResult.filename);
-		} else { // binary content
-			response.setHeader(HttpHeaders.CONTENT_TYPE, orgMimeType);
-			response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
-				"filename=" + negResult.filename); // let the browser decide (show|download attachment)
+            response.setHeader(HttpHeaders.CONTENT_TYPE, newMimeType
+                + ";charset=" + negResult.encoding);
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+                "filename=" + negResult.filename);
+        } else { // binary content
+            response.setHeader(HttpHeaders.CONTENT_TYPE, orgMimeType);
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+                "filename=" + negResult.filename); // let the browser decide (show|download attachment)
 //                        "attachment;filename=" + negResult.filename);
-		}
+        }
         if (negResult.language != null) {
-			response.setHeader(HttpHeaders.CONTENT_LANGUAGE, negResult.language);
-		}
+            response.setHeader(HttpHeaders.CONTENT_LANGUAGE, negResult.language);
+        }
         response.setHeader(HttpHeaders.CONTENT_LENGTH, "" + negResult.content.length);
     }
 
@@ -214,8 +216,10 @@ public class FileController
 //        String baseUrl = url.substring(0, url.indexOf(uri)); // "http://localhost:8001"
 //        ServletUriComponentsBuilder.fromPath("/demo/").build().toUriString();
 
-        path = path.substring(box.length()+1); // box root
-        if (path.startsWith("/")) path = path.substring(1); // subdir
+        path = path.substring(box.length() + 1); // box root
+        if (path.startsWith("/")) {
+            path = path.substring(1); // subdir
+        }
 
         return path;
     }

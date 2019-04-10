@@ -21,7 +21,10 @@ public class BlockRemoteInterceptor extends HandlerInterceptorAdapter
         String remoteAddr = getRemoteAddr(request);
         boolean isLocal = "127.0.0.1".equals(remoteAddr) // JUnit
             || "0:0:0:0:0:0:0:1".equals(remoteAddr);
-        if (!isLocal) response.setStatus(HttpStatus.FORBIDDEN.value());
+        if (!isLocal) {
+            response.setStatus(HttpStatus.FORBIDDEN.value());
+            log.warn("Blocking access to {} from remote '{}'", request.getRequestURI(), remoteAddr);
+        }
         return isLocal;
     }
 

@@ -1,10 +1,11 @@
 # TODO
 
+* APPLICATION_JSON_UTF8 
+
 ## In Progress
 
 ## Next Steps
 
-* error accessing metadata for mp3...
 * put size in FileResult
 * unit test json
 * merge branches into master (plugin, json)
