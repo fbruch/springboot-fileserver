@@ -10,7 +10,8 @@ import org.apache.tika.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.endpoint.Endpoint;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -44,7 +45,7 @@ public class FileController
     private final ConverterService converterService;
     private final HtmlService htmlService;
 
-    private List<Endpoint> endpoints;
+    private PathMappedEndpoints endpoints;
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/static/**", method = RequestMethod.GET)
@@ -62,12 +63,13 @@ public class FileController
 
     @Autowired
     public FileController(FileService fileService, ConverterService converterService,
-                          HtmlService htmlService, List<Endpoint> endpoints)
+                          HtmlService htmlService,
+                          @Autowired PathMappedEndpoints pme)
     {
         this.fileService = fileService;
         this.converterService = converterService;
         this.htmlService = htmlService;
-        this.endpoints = endpoints;
+        this.endpoints = pme;
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = "text/html")
@@ -88,8 +90,8 @@ public class FileController
         builder.append("</h3><ul>");
         builder.append("<li><a href=\"/act/actuator/\">actuator</a></li>");
         endpoints.forEach(endpoint ->
-            builder.append("<li><a href=\"/act/" + endpoint.getId()
-                + "\">" + endpoint.getId() + "</a></li>"));
+            builder.append("<li><a href=\"/act/" + endpoint.getRootPath()
+                + "\">" + endpoint.getRootPath() + "</a></li>"));
         builder.append("</ul></body></html>");
         return builder.toString();
     }

@@ -145,7 +145,7 @@ public class FileControllerTest
     @Test
     public void testOptions () throws Exception {
         ResultMatcher accessHeader = MockMvcResultMatchers.header()
-            .string("Allow", "GET,HEAD");
+            .string("Allow", "GET,HEAD,OPTIONS");
 
         MockHttpServletRequestBuilder builder =
             MockMvcRequestBuilders.options(getUrlTemplate());
