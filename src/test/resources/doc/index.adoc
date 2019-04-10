@@ -1,0 +1,1 @@
+git does not track empty directories, so this file is needed
