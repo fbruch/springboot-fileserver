@@ -25,9 +25,6 @@ public class ConverterService
 {
     private static final Logger log = LoggerFactory.getLogger(ConverterService.class);
 
-//    @Autowired
-//    Collection<Converter> converters;
-
     private Map<String, Converter> sourceTargetMap = new HashMap<>();
 
     @Autowired

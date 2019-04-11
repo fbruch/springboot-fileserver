@@ -10,8 +10,6 @@ import org.apache.tika.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
-import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-//@RestController // downloadFile ohne @RequestBody...
 @Controller
 @RequestMapping("/")
 public class FileController
@@ -44,8 +40,6 @@ public class FileController
     private final FileService fileService;
     private final ConverterService converterService;
     private final HtmlService htmlService;
-
-    private PathMappedEndpoints endpoints;
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/static/**", method = RequestMethod.GET)
@@ -63,13 +57,11 @@ public class FileController
 
     @Autowired
     public FileController(FileService fileService, ConverterService converterService,
-                          HtmlService htmlService,
-                          @Autowired PathMappedEndpoints pme)
+                          HtmlService htmlService)
     {
         this.fileService = fileService;
         this.converterService = converterService;
         this.htmlService = htmlService;
-        this.endpoints = pme;
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = "text/html")
@@ -85,13 +77,6 @@ public class FileController
         fileService.getBoxList().forEach(box ->
             builder.append(String.format("<li><a href=\"%s\">%s</a></li>",
                 "http://localhost:8001/" + box, box)));
-        builder.append("</ul><h3>");
-        builder.append("Spring Boot Actuator");
-        builder.append("</h3><ul>");
-        builder.append("<li><a href=\"/act/actuator/\">actuator</a></li>");
-        endpoints.forEach(endpoint ->
-            builder.append("<li><a href=\"/act/" + endpoint.getRootPath()
-                + "\">" + endpoint.getRootPath() + "</a></li>"));
         builder.append("</ul></body></html>");
         return builder.toString();
     }

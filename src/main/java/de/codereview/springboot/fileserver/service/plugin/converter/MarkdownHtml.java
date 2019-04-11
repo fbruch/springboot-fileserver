@@ -1,9 +1,9 @@
 package de.codereview.springboot.fileserver.service.plugin.converter;
 
 import com.vladsch.flexmark.ast.Heading;
-import com.vladsch.flexmark.ast.Node;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.util.ast.Node;
 import de.codereview.fileserver.api.v1.Converter;
 import de.codereview.fileserver.api.v1.ConverterResult;
 import org.slf4j.Logger;

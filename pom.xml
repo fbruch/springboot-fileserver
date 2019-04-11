@@ -74,13 +74,12 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
     </dependency>
-    <!-- generates target/classes/META-INF/spring-configuration-metadata.json during build
+    <!-- generates target/classes/META-INF/spring-configuration-metadata.json during build -->
         <dependency>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-configuration-processor</artifactId>
           <optional>true</optional>
         </dependency>
-    -->
 
     <!-- Test -->
 
@@ -139,12 +138,12 @@
     <dependency>
       <groupId>com.vladsch.flexmark</groupId>
       <artifactId>flexmark</artifactId>
-      <version>0.17.3</version>
+      <version>0.42.0</version>
     </dependency>
     <dependency>
       <groupId>org.asciidoctor</groupId>
       <artifactId>asciidoctorj</artifactId>
-      <version>1.5.4</version>
+      <version>1.6.1</version>
     </dependency>
   </dependencies>
 

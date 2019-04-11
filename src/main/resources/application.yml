@@ -5,7 +5,7 @@ fileserver:
 
 server:
   port: 8001
-  context-path: /
+#  context-path: /
   compression:
     enabled: true
 #    min-response-size: 2048
@@ -16,29 +16,9 @@ spring:
     serialization:
       INDENT_OUTPUT: true
 
-# Actuator
-
-# http://javabeat.net/spring-boot-actuator/
-# http://admin:secretd@localhost:8001
-management.context-path: /act
-management.security.enabled: false
-security.basic.enabled: false
-#security.user.name: admin
-#security.user.password: secret
-#management.security.role: SUPERUSER
-
 info.app:
   name: springboot-fileserver
   url: http://github.com/fbruch/springboot-fileserver
-
-endpoints:
-  actuator:
-    path: /actuator
-    enabled: true
-  beans:
-    id: springbeans
-    sensitive: false
-    enabled: true
 
 # Logging
 

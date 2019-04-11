@@ -7,7 +7,7 @@ import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.AttributesBuilder;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
-import org.asciidoctor.ast.StructuredDocument;
+import org.asciidoctor.ast.DocumentHeader;
 import org.asciidoctor.ast.Title;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,13 +95,11 @@ public class AsciidocHtml implements Converter
         try (Reader targetReader = new InputStreamReader(
             new ByteArrayInputStream(source), encoding))
         {
-            StructuredDocument doc = asciidoctor.readDocumentStructure(targetReader, new HashMap<>());
+            DocumentHeader doc = asciidoctor.readDocumentHeader(targetReader);
             targetReader.close();
-            Title docTitle = doc.getHeader().getDocumentTitle();
+            Title docTitle = doc.getDocumentTitle();
             if (docTitle != null) {
                 title = docTitle.getMain();
-            } else {
-                title = doc.getParts().get(0).getTitle();
             }
         } catch (IOException e) {
             log.error("Error parsing for title", e);

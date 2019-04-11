@@ -112,8 +112,7 @@ public class FileServiceTest
     @Test
     public void getFileMetadata() throws IOException
     {
-        final Path FILE_PATH = Paths.get("src/test/resources/demo/media/the world in my hands.mp3");
-//        final Path FILE_PATH = Paths.get("src/test/resources/demo/media/the%20world%20in%20my%20hands.mp3");
+        final Path FILE_PATH = Paths.get("src/test/resources/demo/media/292.mp3");
         Map<String, String> result = service.getFileMetadata(FILE_PATH);
         String expected = DateTimeFormatter.RFC_1123_DATE_TIME
             .withZone(ZoneOffset.UTC).format(Files.getLastModifiedTime(FILE_PATH).toInstant());

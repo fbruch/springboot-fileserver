@@ -4,8 +4,8 @@ Desktop File Server being realized with Java and Spring Boot.
 
 == Goals
 
-1. Personal Reference Project for Spring Boot
-1. Backend for upcoming Desktop Data Management Application
+. Personal Reference Project for Spring Boot
+. Backend for upcoming Desktop Data Management Application
 
 == Status (Alpha)
 
@@ -13,7 +13,7 @@ Desktop File Server being realized with Java and Spring Boot.
 * Serving all files from configured directory roots
 * Simple explorer-like navigation into document roots ("boxes" and their sub-directories to support interactive testing
 * Mime-type detection using Apache Tika
-* Http-Header for file-based metadata
+* HTTP-Header for file-based metadata
 * Automatic rendering of Markdown and Asciidoctor to HTML
 
 ==== Test / Development
@@ -21,7 +21,7 @@ Desktop File Server being realized with Java and Spring Boot.
 * Java 8, Maven 3.3
 * Configure document roots in `application-run.yml`
 ** Defaults to roots `demo` and `doc` below `src/test/resources`
-* Start using `buildnrun.sh`
+* Start using `buildnrun.sh` (or `buildnrun.cmd` respectively)
 * Point your browser to `http://localhost:8001`
 
 == Future
@@ -30,6 +30,7 @@ Desktop File Server being realized with Java and Spring Boot.
 * Serving text files with mimetype and file-based metadata
 * Explicit and implicit metadata for files and directories
 * Automatic rendering of markdown and asciidoctor to html
+* Serving metadata for directories (content) to enable client implementations (json, HATEOAS)
 * Experimental: Full text search
 
 ==== Milestone 2 (Binary files)
