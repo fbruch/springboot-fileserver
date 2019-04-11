@@ -1,0 +1,35 @@
+[[section-introduction-and-goals]]
+== Introduction and Goals
+
+
+=== Requirements Overview
+
+*About Springboot Fileserver*
+
+Springboot Fileserver is a desktop file server being realized with Java and Spring Boot.
+
+It is a personal reference project for Spring Boot.
+
+It should become the backend for an upcoming desktop data management application.
+
+
+*Features*
+
+* Serving files from configurable file system directories
+* Automatic processing of various file types (rendering, streaming, ...)
+* Plugin interface to support unkown/new file types
+
+=== Quality Goals
+
+
+
+=== Stakeholders
+
+
+
+[options="header",cols="1,2,2"]
+|===
+|Role/Name|Contact|Expectations
+| _<Role-1>_ | _<Contact-1>_ | _<Expectation-1>_
+| _<Role-2>_ | _<Contact-2>_ | _<Expectation-2>_
+|===

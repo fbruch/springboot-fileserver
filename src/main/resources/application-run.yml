@@ -5,8 +5,8 @@ fileserver:
         path: src/test/resources/demo
         encoding: UTF-8
         language: en
-      - name: doc
-        path: src/test/resources/doc
+      - name: arc42
+        path: src/docs/arc42
         encoding: utf-8
         language: en
   plugin:
