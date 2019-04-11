@@ -87,6 +87,7 @@ public class FileControllerTest
         result.setEncoding("iso8859-1");
         result.getHeader().put(HttpHeaders.CONTENT_TYPE, "text/markdown");
         result.setTextual(true);
+        result.setLanguage("de");
 //        result.setContent("# markdown".getBytes(Charset.forName("iso8859-1")));
         when(fileService.getFile(anyString(), anyString(), anyBoolean())).thenReturn(result);
 //        when(fileService.getFileList(BOX_PATH)).thenReturn(pathStream);

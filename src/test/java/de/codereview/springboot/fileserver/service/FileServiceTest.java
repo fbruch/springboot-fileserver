@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -75,7 +76,7 @@ public class FileServiceTest
         assertThat(result.getFilename()).isEqualTo("text-csv.csv");
         assertThat(result.getBox()).isEqualTo(BOX);
         assertThat(result.getEncoding()).isEqualTo(Charset.defaultCharset().name());
-        assertThat(result.getParentPath()).isEqualTo("data/subdir");
+        assertThat(result.getParentPath()).isEqualTo("data"+ FileSystems.getDefault().getSeparator() + "subdir");
         assertThat(result.getLanguage()).isNull();
         assertThat(result.isTextual()).isTrue();
         assertThat(result.isDirectory()).isFalse();
