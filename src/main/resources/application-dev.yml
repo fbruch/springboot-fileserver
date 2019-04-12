@@ -3,5 +3,7 @@ fileserver:
     roots:
       - name: app
         path: .
+      - name: demo
+        path: src/test/resources/demo
       - name: downloads
         path: ${user.home}/Downloads

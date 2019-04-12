@@ -119,9 +119,8 @@ public class FileServiceTest
 
         org.junit.Assert.assertThat(result.get("Last-Modified"),
             org.hamcrest.Matchers.equalTo(expected));
-        // TODO: size
-//        org.junit.Assert.assertThat(result.get("Last-Modified"),
-//            org.hamcrest.Matchers.equalTo(Files.size(FILE_PATH)));
+        org.junit.Assert.assertThat(result.get("Content-Length"),
+            org.hamcrest.Matchers.equalTo("" + Files.size(FILE_PATH)));
     }
 
 }

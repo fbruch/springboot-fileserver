@@ -24,6 +24,7 @@ info.app:
 
 logging:
   level:
+    org.asciidoctor: debug
     org.springframework.web: info
     de.codereview.springboot.fileserver: debug
     de.codereview.springboot.fileserver.service: trace

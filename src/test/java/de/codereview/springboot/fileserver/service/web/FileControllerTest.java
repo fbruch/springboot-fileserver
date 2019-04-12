@@ -7,7 +7,6 @@ import de.codereview.springboot.fileserver.service.plugin.ConverterService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -115,7 +114,7 @@ public class FileControllerTest
 
         when(converterService.isConversionAvailable("text/markdown", "text/html")).thenReturn(true);
         when(converterService.convert(
-            any(),eq("text/markdown"), eq("text/html"), eq("dummy-file.md"), eq("iso8859-1"), anyString()))
+            any(),eq("text/markdown"), eq("text/html"), eq("dummy-file.md"), anyString(), eq("iso8859-1"), anyString()))
             .thenReturn(new ConverterResult("dummy-html".getBytes(UTF8),"dummy-title", "UTF-8"));
 
         MediaType accept = new MediaType(MediaType.TEXT_HTML, UTF8);

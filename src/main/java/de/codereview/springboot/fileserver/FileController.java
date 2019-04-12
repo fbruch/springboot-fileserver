@@ -171,7 +171,7 @@ public class FileController
     private static void setResponseHeaders(HttpServletRequest request, HttpServletResponse response,
                                            FileResult fileResult, NegotiationResult negResult)
     {
-        String url = request.getRequestURL().toString(); // "http://localhost:8001/fs/box/..."
+        String url = request.getRequestURL().toString();
         String orgMimeType = fileResult.getHeader().get(HttpHeaders.CONTENT_TYPE);
         String newMimeType = negResult.mimetype;
         if (!Objects.equals(newMimeType, orgMimeType)) {
@@ -232,7 +232,7 @@ public class FileController
             if (converterService.isConversionAvailable(mimetype, targetType)) {
                 log.debug("conversion from {} to {}", mimetype, targetType);
                 ConverterResult convResult = converterService.convert(result.content, mimetype, targetType,
-                    filename, fileResult.getEncoding(), fileResult.getLanguage());
+                    filename, fileResult.getParentPath(), fileResult.getEncoding(), fileResult.getLanguage());
                 result.filename = filename + converterService.getTargetExtension(targetType);
                 result.mimetype = targetType;
                 result.content = convResult.getContent();

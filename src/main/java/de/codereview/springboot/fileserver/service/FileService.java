@@ -106,8 +106,7 @@ public class FileService
             getFileList(absPath).forEach(fpath -> {
                 try {
                     Path relPath = boxPath.relativize(fpath);
-                    FileResult fresult = getFile(box, relPath.toString(),
-                        recursive, recursive ? false : true);
+                    FileResult fresult = getFile(box, relPath.toString(), recursive, !recursive);
                     fresult.setBox(null);
                     fresult.setParentPath(null);
                     files.add(fresult);
@@ -159,6 +158,7 @@ public class FileService
             String lastModified = DateTimeFormatter.RFC_1123_DATE_TIME
                 .withZone(ZoneOffset.UTC).format(lastModifiedTime.toInstant());
             result.put(HttpHeaders.LAST_MODIFIED, lastModified);
+            result.put(HttpHeaders.CONTENT_LENGTH, "" + Files.size(filePath));
         } catch (IOException e) {
             String msg = String.format("Error accessing metadata for file %s", filePath);
             log.error(msg);
@@ -171,7 +171,7 @@ public class FileService
      * @param box not null
      * @return default charset, if no encoding is configured for the given box
      */
-    String getBoxEncoding(String box)
+    private String getBoxEncoding(String box)
     {
         String encoding = boxes.get(box).getEncoding();
         if (encoding == null) {
@@ -185,7 +185,7 @@ public class FileService
      * @param box not null
      * @return null, if no language is configured for the given box
      */
-    String getBoxLanguage(String box)
+    private String getBoxLanguage(String box)
     {
         String lang = boxes.get(box).getLanguage();
 //        if (lang==null) {

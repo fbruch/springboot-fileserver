@@ -8,5 +8,6 @@ public interface Converter
 
     String getTarget();
 
-    ConverterResult convert(byte[] source, String sourceEncoding, String sourceLanguage, String filename) throws UnsupportedEncodingException;
+    ConverterResult convert(byte[] source, String sourceEncoding, String sourceLanguage,
+                            String filename) throws UnsupportedEncodingException;
 }

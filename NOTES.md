@@ -42,7 +42,6 @@
 
 #### Steps
 
-1. return (jackson?-auto-mapped) `.json` for directories with `/fs/`
 1. configurable mimetype-filters for directories (`/?f=image`)
 1. custom html directory rendering (images?, music?) using json-api and javascript
 

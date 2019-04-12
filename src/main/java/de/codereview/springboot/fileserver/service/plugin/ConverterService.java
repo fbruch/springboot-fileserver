@@ -85,7 +85,7 @@ public class ConverterService
         return sourceTargetMap.get(key.intern());
     }
 
-    public ConverterResult convert(byte[] data, String source, String target, String filename, String sourceEncoding, String sourceLanguage)
+    public ConverterResult convert(byte[] data, String source, String target, String filename, String relativePath, String sourceEncoding, String sourceLanguage)
     {
         Converter converter = getConverter(source, target);
         if (converter == null) {

@@ -14,4 +14,8 @@ Sample paragraph.
 * Ö, Ä, Ü
 * ß
 
+=== Images
+
+image::icons8-creative-commons-48.png[]
+
 End of document.

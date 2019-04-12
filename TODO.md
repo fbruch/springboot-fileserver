@@ -1,14 +1,9 @@
 # TODO
 
-* APPLICATION_JSON_UTF8 
-
 ## In Progress
 
 ## Next Steps
 
-* put size in FileResult
-* unit test json
-* merge branches into master (plugin, json)
 * https://choosealicense.com/
 
 ## Sooner
@@ -16,6 +11,7 @@
 * `mp3` plugin
   * plugin metadata api
   * tika
+  * https://github.com/mpatric/mp3agic
 * `m3u` plugin
 * `lp` plugin
   * plugin lucene api
@@ -31,5 +27,5 @@
 ### browser dir page extension
 
 * metadata
-* available conversions as actions
+* available conversions as actions (HATEOAS)
 * recursive
