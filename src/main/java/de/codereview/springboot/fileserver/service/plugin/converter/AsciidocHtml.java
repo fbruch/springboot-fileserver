@@ -36,6 +36,7 @@ public class AsciidocHtml implements Converter
     public AsciidocHtml(PluginProperties pluginProps)
     {
         asciidoctor = Asciidoctor.Factory.create();
+        asciidoctor.requireLibrary("asciidoctor-diagram");
         properties = new HashMap<>(pluginProps.getAsciidoctor());
     }
 

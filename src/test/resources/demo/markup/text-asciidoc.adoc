@@ -18,4 +18,14 @@ Sample paragraph.
 
 image::icons8-creative-commons-48.png[]
 
+==== Diagrams
+
+[plantuml,auth-protocol]
+....
+Alice -> Bob: Authentication Request
+Bob --> Alice: Authentication Response
+Alice -> Bob: Another authentication Request
+Alice <-- Bob: another authentication Response
+....
+
 End of document.
