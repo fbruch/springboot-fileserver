@@ -1,5 +1,58 @@
 [[section-design-decisions]]
 == Design Decisions
 
+=== Use temporary directory for converters
+The current interface for converters relies upon a byte-array as input and a byte-array as output for converters.
 
+==== Status Quo
 
+[plantuml,,adoc-conversion]
+--
+Title: On-the-fly conversion of asciidoc to html
+BROWSER->FileController: GET /demo/.../test.adoc
+FileController->FileService: demo .../test.adoc
+FileService-->FileController: test.adoc
+FileController->ConverterService: isConvAvailable (adoc,html)
+ConverterService-->FileController: true
+FileController->ConverterService: convert (byte[],adoc,html)
+ConverterService->AsciidocHtml: convert (byte[],adoc,html)
+AsciidocHtml->ASCIIDOC: "adoc", "images/"
+ASCIIDOC-->AsciidocHtml: byte[]
+AsciidocHtml-->ConverterService: byte[],title,encoding
+ConverterService-->FileController: byte[],title,encoding
+FileController-->BROWSER: test.html
+--
+
+==== Problem
+The Asciidoc-Conversion needs to generate additional diagrams which must be accessible from the generated html from inside the client's browser.
+
+==== Proposed Solution
+
+[plantuml,,adoc-conversion-proposal]
+--
+Title: On-the-fly conversion of asciidoc to html using TMP directory
+BROWSER->FileController: GET /demo/.../test.adoc
+FileController->FileService: demo .../test.adoc
+FileService-->FileController: test.adoc
+FileController->ConverterService: isConvAvailable (adoc,html)
+ConverterService-->FileController: true
+
+FileController-->FileController: create TMP dir
+FileController-->FileController: put SRC file inside
+FileController->ConverterService: convert (File,adoc,html)
+
+ConverterService->AsciidocHtml: convert (File,adoc,html)
+AsciidocHtml->ASCIIDOC: File, "images/"
+ASCIIDOC-->AsciidocHtml: byte[]
+AsciidocHtml-->ConverterService: byte[],title,encoding
+ConverterService-->FileController: byte[],title,encoding
+
+FileController->FileController: copy TMP/* to .../
+FileController->FileController: rm TMP/
+
+FileController-->BROWSER: test.html
+--
+
+A _better_ solution could be a virtual file system which allows transparent read access to files inside and below the source file's directory and also virtual writes (buffered in RAM) to generate additional files.
+
+A _simpler_ solution would be the replacement of the `byte[]`-Parameter by the concrete `File`... 

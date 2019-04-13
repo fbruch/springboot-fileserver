@@ -3,6 +3,10 @@ fileserver:
     roots:
       - name: app
         path: .
+      - name: arc42
+        path: src/docs/arc42
+        encoding: utf-8
+        language: en
       - name: demo
         path: src/test/resources/demo
       - name: downloads

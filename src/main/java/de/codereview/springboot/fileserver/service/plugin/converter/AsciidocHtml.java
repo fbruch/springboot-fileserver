@@ -9,12 +9,15 @@ import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
 import org.asciidoctor.ast.DocumentHeader;
 import org.asciidoctor.ast.Title;
+import org.asciidoctor.log.LogHandler;
+import org.asciidoctor.log.LogRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -36,6 +39,7 @@ public class AsciidocHtml implements Converter
     public AsciidocHtml(PluginProperties pluginProps)
     {
         asciidoctor = Asciidoctor.Factory.create();
+        asciidoctor.registerLogHandler(logRecord -> System.err.println(logRecord.getMessage()));
         asciidoctor.requireLibrary("asciidoctor-diagram");
         properties = new HashMap<>(pluginProps.getAsciidoctor());
     }
@@ -84,6 +88,9 @@ public class AsciidocHtml implements Converter
         Map<String, Object> options = OptionsBuilder.options()
             .safe(SafeMode.SAFE)
             .headerFooter(true)
+//            .inPlace(true)
+//            .toFile(true)
+            .baseDir(new File("/Users/frank/frb/springboot-fileserver/src/docs/arc42"))
             .attributes(attributes)
             .asMap();
 

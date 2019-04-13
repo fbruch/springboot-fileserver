@@ -20,18 +20,19 @@ Desktop File Server being realized with Java and Spring Boot.
 
 * Java 8, Maven 3.3
 * Configure document roots in `application-run.yml`
-** Defaults to roots `demo` and `doc` below `src/test/resources`
+** Defaults to root `demo` below `src/test/resources`
 * Start using `buildnrun.sh` (or `buildnrun.cmd` respectively)
 * Point your browser to `http://localhost:8001`
 
 == Future
 
 ==== Milestone 1 (Read Only, Plain Text, Markup Rendering)
-* Serving text files with mimetype and file-based metadata
-* Explicit and implicit metadata for files and directories
-* Automatic rendering of markdown and asciidoctor to html
-* Serving metadata for directories (content) to enable client implementations (json, HATEOAS)
-* Experimental: Full text search
+* [x] Serving text files with mimetype and file-based metadata
+* [x] Explicit and implicit metadata for files and directories
+* [x] Automatic rendering of markdown and asciidoctor to html
+* [x] Serving metadata for directories (content) to enable client implementations (json)
+** [ ] HATEOAS to include alternative representations (using converters)
+* [ ] Experimental: Full text search
 
 ==== Milestone 2 (Binary files)
 
