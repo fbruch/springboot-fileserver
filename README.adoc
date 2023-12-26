@@ -16,9 +16,9 @@ Desktop File Server being realized with Java and Spring Boot.
 * HTTP-Header for file-based metadata
 * Automatic rendering of Markdown and Asciidoctor to HTML
 
-==== Test / Development
+=== Test / Development
 
-* Java 8, Maven 3.3
+* Java 21, Maven 3.6
 * Configure document roots in `application-run.yml`
 ** Defaults to roots `demo` and `doc` below `src/test/resources`
 * Start using `buildnrun.sh` (or `buildnrun.cmd` respectively)
@@ -26,14 +26,14 @@ Desktop File Server being realized with Java and Spring Boot.
 
 == Future
 
-==== Milestone 1 (Read Only, Plain Text, Markup Rendering)
+=== Milestone 1 (Read Only, Plain Text, Markup Rendering)
 * Serving text files with mimetype and file-based metadata
 * Explicit and implicit metadata for files and directories
 * Automatic rendering of markdown and asciidoctor to html
 * Serving metadata for directories (content) to enable client implementations (json, HATEOAS)
 * Experimental: Full text search
 
-==== Milestone 2 (Binary files)
+=== Milestone 2 (Binary files)
 
 * Documents, Music, Images, Videos
 * Extracting text from office documents
@@ -41,12 +41,12 @@ Desktop File Server being realized with Java and Spring Boot.
 * Content-based metadata (id3, exif, ...)
 * Streaming large files
 
-==== Milestone 3 (Create/Update/Delete, Version History)
+=== Milestone 3 (Create/Update/Delete, Version History)
 
 * Create new files, update or delete existing files
 * Experimental: Automatic Version Control using git
 
-==== Potential Future Milestones (Multi-User Server-Usage)
+=== Potential Future Milestones (Multi-User Server-Usage)
 
 * Authentication
 * Authorization
@@ -57,4 +57,4 @@ Desktop File Server being realized with Java and Spring Boot.
 * http://www.oracle.com/technetwork/java/javase/overview/index.html[Java 8], https://projects.spring.io/spring-boot/[Spring Boot]
 * https://tika.apache.org/[Apache Tika] (Parsing, Type detection)
 * https://github.com/vsch/flexmark-java[flexmark-java] (Markdown)
-* https://github.com/asciidoctor/asciidoctorj[asciidoctorj]
+* https://github.com/asciidoctor/asciidoctorj[asciidoctorj] (Asciidoc)

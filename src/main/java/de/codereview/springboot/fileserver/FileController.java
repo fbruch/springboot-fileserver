@@ -6,13 +6,16 @@ import de.codereview.springboot.fileserver.service.FileResult;
 import de.codereview.springboot.fileserver.service.FileService;
 import de.codereview.springboot.fileserver.service.HtmlService;
 import de.codereview.springboot.fileserver.service.plugin.ConverterService;
-import org.apache.tika.io.IOUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -22,9 +25,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.List;
@@ -37,9 +41,18 @@ public class FileController
 {
     private static final Logger log = LoggerFactory.getLogger(FileController.class);
 
-    private final FileService fileService;
-    private final ConverterService converterService;
-    private final HtmlService htmlService;
+    @Autowired
+    private FileService fileService;
+    @Autowired
+    private ConverterService converterService;
+    @Autowired
+    private HtmlService htmlService;
+
+    @Autowired
+    Environment environment;
+
+    @Value("${server.port}")
+    private int serverPort;
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/static/**", method = RequestMethod.GET)
@@ -75,37 +88,45 @@ public class FileController
         builder.append("Your boxes");
         builder.append("</h2><ul>");
         fileService.getBoxList().forEach(box ->
-            builder.append(String.format("<li><a href=\"%s\">%s</a></li>",
-                "http://localhost:8001/" + box, box)));
+            builder.append(String.format("<li><a href=\"http://localhost:%d/%s\">%s</a></li>", serverPort, box, box)));
         builder.append("</ul></body></html>");
         return builder.toString();
     }
 
+//    @RequestMapping(value = "/favicon.ico", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+    @RequestMapping(value = "/favicon.ico", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<byte[]> favicon(@RequestHeader("Accept") String accept) throws IOException
+    {
+        InputStream in = getClass().getResourceAsStream("/android-chrome-512x512.png");
+        assert in != null;
+        return ResponseEntity.ok(IOUtils.toByteArray(in));
+    }
+
     @RequestMapping(value = "/{box}/**", method = {RequestMethod.GET})
     @ResponseBody
-    public Object file(@PathVariable String box, @RequestHeader Map<String, String> header,
-                       HttpServletRequest request, HttpServletResponse response,
+    public ResponseEntity<?> file(@PathVariable String box, @RequestHeader Map<String, String> header,
+                       HttpServletRequest request,
                        @RequestParam(name = "recursive", required = false) String recursive)
     {
         String relpath = getRelativePathInBox(box, request);
-        log.debug("accessing '{}' from box '{}'", relpath, box);
+        log.debug("file-accessing '{}' from box '{}'", relpath, box);
 
         try {
             FileResult fileResult = fileService.getFile(box, relpath, recursive != null);
             if (fileResult.isDirectory()) {
-                throw new RuntimeException("accessing directories only as application/json or text/html");
+                // TODO: either directoryAsJson or directoryAsHtml
+                return directoryAsHtml(box, header, request, recursive);
             } else {
                 header.keySet().forEach(key -> log.trace("{} : {}", key, header.get(key)));
 
                 NegotiationResult negResult = negotiateResponseFormat(fileResult, header);
 
-                fileResult.getHeader().put(HttpHeaders.CONTENT_LENGTH, "" + negResult.content.length);
+                HttpHeaders headers = getResponseHeaders(request, fileResult, negResult);
 
-                fileResult.getHeader().forEach(response::setHeader);
-
-                setResponseHeaders(request, response, fileResult, negResult);
-
-                return negResult.content;
+                return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .headers(headers)
+                    .body(negResult.content);
             }
         } catch (IOException e) {
             String msg = "Error accessing box storage";
@@ -114,14 +135,12 @@ public class FileController
         }
     }
 
-    @RequestMapping(value = "/{box}/**", method = RequestMethod.GET, produces = "text/html")
-    @ResponseBody
-    public Object directoryAsHtml(@PathVariable String box, @RequestHeader Map<String, String> header,
-                                  HttpServletRequest request, HttpServletResponse response,
+    public ResponseEntity<?> directoryAsHtml(@PathVariable String box, @RequestHeader Map<String, String> header,
+                                  HttpServletRequest request,
                                   @RequestParam(name = "recursive", required = false) String recursive)
     {
         String relpath = getRelativePathInBox(box, request);
-        log.debug("accessing '{}' from box '{}'", relpath, box);
+        log.debug("dir-accessing '{}' from box '{}'", relpath, box);
         try {
             FileResult fileResult = fileService.getFile(box, relpath, recursive != null);
             if (fileResult.isDirectory()) {
@@ -133,9 +152,14 @@ public class FileController
                     Path parentPath = boxPath.resolve(fileResult.getParentPath());
                     filePath = parentPath.resolve(fileResult.getFilename());
                 }
-                return htmlService.listDirectory(filePath, box, boxPath, request.getContextPath());
+                HttpHeaders headers = new HttpHeaders();
+                headers.set(HttpHeaders.CONTENT_TYPE, "text/html;charset=UTF-8");
+                return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .headers(headers)
+                    .body(htmlService.listDirectory(filePath, box, boxPath, request.getContextPath()));
             } else {
-                return file(box, header, request, response, recursive);
+                return file(box, header, request, recursive);
             }
         } catch (IOException e) {
             String msg = "Error accessing box storage";
@@ -144,10 +168,9 @@ public class FileController
         }
     }
 
-    @RequestMapping(value = "/{box}/**", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public Object directoryAsJson(@PathVariable String box, @RequestHeader Map<String, String> header,
-                                  HttpServletRequest request, HttpServletResponse response,
+    public ResponseEntity<?> directoryAsJson(@PathVariable String box, @RequestHeader Map<String, String> header,
+                                  HttpServletRequest request,
                                   @RequestParam(name = "recursive", required = false) String recursive)
     {
         String relpath = getRelativePathInBox(box, request);
@@ -156,10 +179,14 @@ public class FileController
             FileResult fileResult = fileService.getFile(box, relpath, recursive != null);
             if (fileResult.isDirectory()) {
                 String json = new ObjectMapper().writeValueAsString(fileResult);
-                response.setHeader(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8");
-                return json;
+                HttpHeaders headers = new HttpHeaders();
+                headers.set(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8");
+                return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .headers(headers)
+                    .body(json);
             } else {
-                return file(box, header, request, response, recursive);
+                return file(box, header, request, recursive);
             }
         } catch (IOException e) {
             String msg = "Error accessing box storage";
@@ -168,31 +195,33 @@ public class FileController
         }
     }
 
-    private static void setResponseHeaders(HttpServletRequest request, HttpServletResponse response,
+    private static HttpHeaders getResponseHeaders(HttpServletRequest request,
                                            FileResult fileResult, NegotiationResult negResult)
     {
+        HttpHeaders result = new HttpHeaders();
         String url = request.getRequestURL().toString();
         String orgMimeType = fileResult.getHeader().get(HttpHeaders.CONTENT_TYPE);
         String newMimeType = negResult.mimetype;
         if (!Objects.equals(newMimeType, orgMimeType)) {
-            response.setHeader(HttpHeaders.LINK,
+            result.set(HttpHeaders.LINK,
                 "<" + url + ">; rel=\"alternate\";type=\"" + orgMimeType + "\"");
         }
         if (fileResult.isTextual()) {
-            response.setHeader(HttpHeaders.CONTENT_TYPE, newMimeType
+            result.set(HttpHeaders.CONTENT_TYPE, newMimeType
                 + ";charset=" + negResult.encoding);
-            response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+            result.set(HttpHeaders.CONTENT_DISPOSITION,
                 "filename=" + negResult.filename);
         } else { // binary content
-            response.setHeader(HttpHeaders.CONTENT_TYPE, orgMimeType);
-            response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+            result.set(HttpHeaders.CONTENT_TYPE, orgMimeType);
+            result.set(HttpHeaders.CONTENT_DISPOSITION,
                 "filename=" + negResult.filename); // let the browser decide (show|download attachment)
 //                        "attachment;filename=" + negResult.filename);
         }
         if (negResult.language != null) {
-            response.setHeader(HttpHeaders.CONTENT_LANGUAGE, negResult.language);
+            result.set(HttpHeaders.CONTENT_LANGUAGE, negResult.language);
         }
-        response.setHeader(HttpHeaders.CONTENT_LENGTH, "" + negResult.content.length);
+        result.set(HttpHeaders.CONTENT_LENGTH, "" + negResult.content.length);
+        return result;
     }
 
     private static String getRelativePathInBox(@PathVariable String box, HttpServletRequest request)
@@ -200,7 +229,7 @@ public class FileController
         String path = request.getRequestURI(); // "/fs/box/..."
         // alt: request.getServletPath();
         // alt: request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
-//        String baseUrl = url.substring(0, url.indexOf(uri)); // "http://localhost:8001"
+//        String baseUrl = url.substring(0, url.indexOf(uri)); // "http://localhost:3"
 //        ServletUriComponentsBuilder.fromPath("/demo/").build().toUriString();
 
         path = path.substring(box.length() + 1); // box root
@@ -219,7 +248,7 @@ public class FileController
         NegotiationResult result = new NegotiationResult(filename, mimetype,
             fileService.readFile(fileResult));
         result.encoding = fileResult.getEncoding();
-        String acceptHeader = header.get(HttpHeaders.ACCEPT);
+        String acceptHeader = header.getOrDefault("Accept", header.get("accept"));
         List<MediaType> acceptedTypes = MediaType.parseMediaTypes(acceptHeader);
         // negotiate mimetype
         Charset acceptedCharset = null;

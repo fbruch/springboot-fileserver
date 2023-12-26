@@ -1,7 +1,7 @@
 package de.codereview.springboot.fileserver.service;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpHeaders;
 
@@ -16,6 +16,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 public class FileServiceTest
 {
@@ -25,7 +27,7 @@ public class FileServiceTest
 
     private FileTypeService fileTypeService;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         fileTypeService = Mockito.mock(FileTypeService.class);
@@ -105,8 +107,7 @@ public class FileServiceTest
     {
         final Path FILE_PATH = Paths.get("src/test/resources/demo/media/image-jpeg.jpg");
         byte[] result = service.readFile(FILE_PATH);
-        org.junit.Assert.assertThat((long) result.length,
-            org.hamcrest.Matchers.equalTo(Files.size(FILE_PATH)));
+        assertEquals(Files.size(FILE_PATH), result.length);
     }
 
     @Test
@@ -117,10 +118,8 @@ public class FileServiceTest
         String expected = DateTimeFormatter.RFC_1123_DATE_TIME
             .withZone(ZoneOffset.UTC).format(Files.getLastModifiedTime(FILE_PATH).toInstant());
 
-        org.junit.Assert.assertThat(result.get("Last-Modified"),
-            org.hamcrest.Matchers.equalTo(expected));
-        org.junit.Assert.assertThat(result.get("Content-Length"),
-            org.hamcrest.Matchers.equalTo("" + Files.size(FILE_PATH)));
+        assertEquals(expected, result.get("Last-Modified"));
+        assertEquals("" + Files.size(FILE_PATH), result.get("Content-Length"));
     }
 
 }

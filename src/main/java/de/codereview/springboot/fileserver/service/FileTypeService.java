@@ -14,7 +14,7 @@ import java.util.List;
 @Service
 public class FileTypeService
 {
-	private Tika tika = new Tika();
+	private final Tika tika = new Tika();
 
     private final static MediaTypeRegistry mediaTypeRegistry = MediaTypeRegistry.getDefaultRegistry();
 

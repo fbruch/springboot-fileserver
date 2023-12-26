@@ -3,14 +3,14 @@ package de.codereview.springboot.fileserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.servlet.HandlerInterceptor;
 
-public class BlockRemoteInterceptor extends HandlerInterceptorAdapter
+public class BlockRemoteInterceptor implements HandlerInterceptor
 {
-    private static Logger log = LoggerFactory.getLogger(BlockRemoteInterceptor.class);
+    private static final Logger log = LoggerFactory.getLogger(BlockRemoteInterceptor.class);
 
     @Override
     public boolean preHandle(

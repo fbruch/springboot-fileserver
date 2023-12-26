@@ -3,10 +3,7 @@ package de.codereview.springboot.fileserver.service.plugin.converter;
 import de.codereview.fileserver.api.v1.Converter;
 import de.codereview.fileserver.api.v1.ConverterResult;
 import de.codereview.springboot.fileserver.service.plugin.PluginProperties;
-import org.asciidoctor.Asciidoctor;
-import org.asciidoctor.AttributesBuilder;
-import org.asciidoctor.OptionsBuilder;
-import org.asciidoctor.SafeMode;
+import org.asciidoctor.*;
 import org.asciidoctor.ast.DocumentHeader;
 import org.asciidoctor.ast.Title;
 import org.slf4j.Logger;
@@ -22,6 +19,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * TODO: Support included documents, see https://docs.asciidoctor.org/asciidoctorj/latest/locating-files/
+ */
 @Service
 public class AsciidocHtml implements Converter
 {
@@ -55,38 +55,37 @@ public class AsciidocHtml implements Converter
     public ConverterResult convert(byte[] source, String sourceEncoding, String sourceLanguage, String filename) throws UnsupportedEncodingException
     {
         String text = new String(source, sourceEncoding);
-        if (!"UTF-8".equals(sourceEncoding.toUpperCase())) {
+        if (!"UTF-8".equalsIgnoreCase(sourceEncoding)) {
             log.warn("Asciidoctor does not support encodings other than UTF-8, converting '{}'...", sourceEncoding);
             // https://github.com/asciidoctor/asciidoctor.org/issues/160
         }
         String title = giveTitle(source, sourceEncoding);
         if (title==null) title = filename;
-        Map<String, Object> options = getOptions(sourceLanguage);
+        Options options = getOptions(sourceLanguage);
         byte[] body = asciidoctor.convert(text, options).getBytes("UTF-8");
         return new ConverterResult(body, title, "UTF-8");
     }
 
-    private Map<String, Object> getOptions(String sourceLanguage)
+    private Options getOptions(String sourceLanguage)
     {
         String imageDir = properties.get("images-dir");
 
         if (imageDir==null) imageDir=".";
-        Map<String, Object> attributes = AttributesBuilder.attributes()
-            .backend("html") // "docbook"
+
+        Attributes attributes = Attributes.builder()
+            .backend("html") // or "docbook"
             .imagesDir(imageDir)
-            .asMap();
+            .build();
 
         if (sourceLanguage!=null) {
-            attributes.put("lang", sourceLanguage);
+            attributes.setAttribute("lang", sourceLanguage);
         }
 
-        Map<String, Object> options = OptionsBuilder.options()
+        return Options.builder()
             .safe(SafeMode.SAFE)
-            .headerFooter(true)
+            .standalone(true) // header and footer
             .attributes(attributes)
-            .asMap();
-
-        return options;
+            .build();
     }
 
     private String giveTitle(byte[] source, String encoding)

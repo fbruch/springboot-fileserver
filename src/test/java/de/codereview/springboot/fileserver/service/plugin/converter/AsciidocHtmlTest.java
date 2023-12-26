@@ -2,8 +2,8 @@ package de.codereview.springboot.fileserver.service.plugin.converter;
 
 import de.codereview.fileserver.api.v1.ConverterResult;
 import de.codereview.springboot.fileserver.service.plugin.PluginProperties;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -12,7 +12,7 @@ public class AsciidocHtmlTest
 {
     AsciidocHtml service;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         PluginProperties properties = new PluginProperties();
         properties.getAsciidoctor().put("images-dir", "images");

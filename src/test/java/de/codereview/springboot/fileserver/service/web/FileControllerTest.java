@@ -1,12 +1,12 @@
 package de.codereview.springboot.fileserver.service.web;
 
 import de.codereview.fileserver.api.v1.ConverterResult;
+import de.codereview.springboot.fileserver.Application;
 import de.codereview.springboot.fileserver.service.FileResult;
 import de.codereview.springboot.fileserver.service.FileService;
 import de.codereview.springboot.fileserver.service.plugin.ConverterService;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,7 +14,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
@@ -25,11 +24,14 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -39,8 +41,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = Application.class)
 @AutoConfigureMockMvc                   // full spring application context...
 //@WebMvcTest(FileController.class)     // just the web layer...
 @ActiveProfiles("dev")
@@ -62,7 +63,7 @@ public class FileControllerTest
 	private static final String DIR_PATH = "some/sub/dir";
 	private static final String FILE_NAME = "dummy-file.md";
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		boxes = new HashMap<>();
 		boxes.put(BOX_NAME, BOX_PATH);
@@ -78,7 +79,7 @@ public class FileControllerTest
         when(fileService.getBoxList()).thenReturn(boxes.keySet());
         when(fileService.getBoxPath(BOX_NAME)).thenReturn(BOX_PATH);
         when(fileService.getBoxPath(BOX_NAME)).thenReturn(BOX_PATH);
-        when(fileService.readFile(any())).thenReturn("dummy-content".getBytes(Charset.forName("UTF-8")));
+        when(fileService.readFile(any())).thenReturn("dummy-content".getBytes(StandardCharsets.UTF_8));
 //        when(fileService.getBoxEncoding(BOX_NAME)).thenReturn(Charset.defaultCharset().name());
         FileResult result = new FileResult(BOX_NAME, DIR_PATH, FILE_NAME, false);
         result.setEncoding("iso8859-1");
@@ -100,15 +101,14 @@ public class FileControllerTest
 
 //		org.junit.Assert.assertThat(result.getResponse().getContentAsByteArray(),
 //				org.hamcrest.Matchers.equalTo(fileResult.getContent()));
-		org.junit.Assert.assertThat(result.getResponse().getHeader("Content-Type"),
-				org.hamcrest.Matchers.equalTo("text/markdown;charset=iso8859-1"));
+		assertEquals("text/markdown;charset=iso8859-1", result.getResponse().getHeader("Content-Type"));
 	}
 
 	@Test
 	public void shouldUseMimeTypeAndEncodingFromAcceptHeaderWhenRunningConverter() throws Exception {
         FileResult fileResult = mockFileService();
 
-        final Charset UTF8 = Charset.forName("utf-8");
+        final Charset UTF8 = StandardCharsets.UTF_8;
         String CHARSET = UTF8.name();
         String TYPE = MediaType.TEXT_HTML_VALUE;
 
@@ -122,10 +122,8 @@ public class FileControllerTest
         MvcResult result = mockMvc.perform(get(getUrlTemplate()).accept(accept))
 				.andDo(print()).andExpect(status().isOk()).andReturn();
 
-		org.junit.Assert.assertThat(result.getResponse().getHeader("Content-Type"),
-				org.hamcrest.Matchers.equalTo(TYPE + ";charset=" + CHARSET));
-        org.junit.Assert.assertThat(result.getResponse().getContentAsByteArray(),
-            org.hamcrest.Matchers.equalTo("dummy-html".getBytes(UTF8))); // ensure converter is run
+		assertEquals(TYPE + ";charset=" + CHARSET, result.getResponse().getHeader("Content-Type"));
+        assertArrayEquals("dummy-html".getBytes(UTF8), result.getResponse().getContentAsByteArray()); // ensure converter is run
 	}
 
     @Test

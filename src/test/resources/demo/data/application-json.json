@@ -8,7 +8,7 @@
     "two",
     "three"
   ],
-  "umlauts", "öäüÖÄÜß",
+  "umlauts":  "öäüÖÄÜß",
   "image": {
     "url": "http://example.com/image.jpg",
     "width": 100,

@@ -5,8 +5,8 @@ import de.codereview.springboot.fileserver.service.plugin.PluginProperties;
 import de.codereview.springboot.fileserver.service.plugin.converter.AsciidocHtml;
 import de.codereview.springboot.fileserver.service.plugin.ConverterService;
 import de.codereview.springboot.fileserver.service.plugin.converter.MarkdownHtml;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 import org.springframework.test.context.ActiveProfiles;
@@ -14,16 +14,16 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 @ActiveProfiles("dev")
 public class ConverterServiceTest
 {
     ConverterService service;
 
-    @Before
-    public void setUp() throws Exception
-    {
+    @BeforeEach
+    public void setUp() {
         AsciidocHtml asciidoc = Mockito.mock(AsciidocHtml.class);
         BDDMockito.given(asciidoc.getSource()).willReturn("text/asciidoc");
         BDDMockito.given(asciidoc.getTarget()).willReturn("text/html");
@@ -41,8 +41,7 @@ public class ConverterServiceTest
     }
 
     @Test
-    public void getTargetExtension() throws Exception
-    {
+    public void getTargetExtension() {
         assertEquals(".html", service.getTargetExtension("text/html"));
 //        assertEquals(".md", service.getTargetExtension("text/markdown"));
         assertEquals(".md", service.getTargetExtension("text/x-web-markdown"));

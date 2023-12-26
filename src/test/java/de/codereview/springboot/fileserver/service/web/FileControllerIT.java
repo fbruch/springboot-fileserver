@@ -1,8 +1,7 @@
 package de.codereview.springboot.fileserver.service.web;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -13,14 +12,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.MimeType;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("dev")
 public class FileControllerIT
@@ -34,7 +30,7 @@ public class FileControllerIT
 //    @MockBean
 //    private FileService fileService;
 
-    @Before
+    @BeforeEach
     public void setup() {
 //        given(fileService.getVehicleDetails("123")
 //        ).willReturn(new VehicleDetails("Honda", "Civic"));
@@ -50,7 +46,7 @@ public class FileControllerIT
         MediaType contentType = entity.getHeaders().getContentType();
         assertThat(contentType.getType()).isEqualTo("text");
         assertThat(contentType.getSubtype()).isEqualTo("markdown");
-        assertThat(contentType.getCharset()).isEqualTo(Charset.forName("UTF8"));
+        assertThat(contentType.getCharset()).isEqualTo(StandardCharsets.UTF_8);
     }
 
     @Test
@@ -63,7 +59,7 @@ public class FileControllerIT
         MediaType contentType = entity.getHeaders().getContentType();
         assertThat(contentType.getType()).isEqualTo("text");
         assertThat(contentType.getSubtype()).isEqualTo("asciidoc");
-        assertThat(contentType.getCharset()).isEqualTo(Charset.forName("UTF8"));
+        assertThat(contentType.getCharset()).isEqualTo(StandardCharsets.UTF_8);
     }
 
     @Test
@@ -89,6 +85,6 @@ public class FileControllerIT
         MediaType contentType = entity.getHeaders().getContentType();
         assertThat(contentType.getType()).isEqualTo("text");
         assertThat(contentType.getSubtype()).isEqualTo("html");
-        assertThat(contentType.getCharset()).isEqualTo(Charset.forName("UTF8"));
+        assertThat(contentType.getCharset()).isEqualTo(StandardCharsets.UTF_8);
     }
 }

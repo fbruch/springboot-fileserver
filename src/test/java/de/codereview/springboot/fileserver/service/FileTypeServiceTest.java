@@ -1,14 +1,15 @@
 package de.codereview.springboot.fileserver.service;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.nio.file.Paths;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 public class FileTypeServiceTest
 {
-    private FileTypeService service = new FileTypeService();
+    private final FileTypeService service = new FileTypeService();
 
     @Test
     public void detectMimeType() throws Exception
@@ -25,6 +26,12 @@ public class FileTypeServiceTest
             "src/test/resources/demo/markup/text-asciidoc.adoc")));
         assertEquals("image/jpeg", service.detectMimeType(Paths.get(
             "src/test/resources/demo/media/image-jpeg.jpg")));
+        assertEquals("image/gif", service.detectMimeType(Paths.get(
+            "src/test/resources/demo/media/image-gif.gif")));
+        assertEquals("image/png", service.detectMimeType(Paths.get(
+            "src/test/resources/demo/media/image-png.png")));
+        assertEquals("image/svg+xml", service.detectMimeType(Paths.get(
+            "src/test/resources/demo/media/image-svg.svg")));
     }
 
     @Test
@@ -40,6 +47,10 @@ public class FileTypeServiceTest
         assertTrue(service.isTextual("text/markdown"));
 
         assertFalse(service.isTextual("image/jpeg"));
+        assertFalse(service.isTextual("image/gif"));
+        assertFalse(service.isTextual("image/png"));
+        assertFalse(service.isTextual("application/mp3"));
+        // TODO: mp4
     }
 
 }
